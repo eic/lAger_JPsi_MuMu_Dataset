@@ -54,7 +54,7 @@ void DVMP_JPsi_Analysis()
     gROOT->ProcessLine("SetePICStyle()");
     //gStyle->SetOptStat(0);
 
-    TString infile="eicReconOutput/EICreconOut_JPsiMuMu_10ifb_10x130ep_Pruned.root";
+    TString infile="eicReconOutput/SimCampaign_JPsiMuMu_10ifb_10x130ep_Pruned.root";
     //TString infile="dis_background/DIS_Q2_1_10_10x130ep_Pruned.root";
     
     std::string filename = infile.Data();
@@ -83,7 +83,7 @@ void DVMP_JPsi_Analysis()
     std::cout << "Proton energy: " << protonEnergy << std::endl;
 
     int lumi_int = static_cast<int>(lumi);
-    std::string outfilename = "outputs/DVMP_JPsi_AnalysisOutput_" + std::to_string(lumi_int) + "ifb_" + beam_config + ".root";
+    std::string outfilename = "outputs/DVMP_SimCampaign_JPsi_AnalysisOutput_" + std::to_string(lumi_int) + "ifb_" + beam_config + ".root";
     //std::string outfilename = "outputs/DIS_Q2_1_10_AnalysisOutput_" + beam_config + ".root";
 
     // Set output file for the histograms

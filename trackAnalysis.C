@@ -41,10 +41,15 @@
 #include "TTreeReaderArray.h"
 #include "TLatex.h"
 
-void trackAnalysis()
-  {
+#include "ePICStyle.C"
 
-    TString infile="eicReconOutput/EICreconOut_JPsiMuMu_10ifb_18x275ep_Pruned.root";
+void trackAnalysis()
+{
+  gROOT->SetBatch(kTRUE);
+  gROOT->ProcessLine("SetePICStyle()");
+  gStyle->SetOptStat(0);
+
+    TString infile="eicReconOutput/EICreconOut_JPsiMuMu_10ifb_10x130ep_Pruned.root";
     std::string filename = infile.Data();
     std::string beam_config;
     std::string marker = "_Pruned.root";
@@ -901,7 +906,7 @@ void trackAnalysis()
     reconx_sigma->Write();
     ofile->cd("..");
     ofile->mkdir("kinematicDifferences");
-    ofile->cd("kinematicsDifferences");
+    ofile->cd("kinematicDifferences");
     deltaQ2_e->Write();
     deltaQ2_JB->Write();
     deltaQ2_DA->Write();

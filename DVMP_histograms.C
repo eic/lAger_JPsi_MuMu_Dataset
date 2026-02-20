@@ -303,7 +303,7 @@ void DVMP_histograms()
     //
 
     TCanvas* C_Q2diff = new TCanvas("C_Q2diff", "C_Q2diff",1100,800);
-    TLegend* legend_Q2diff = new TLegend(0.5, 0.7, 0.7, 0.9);
+    TLegend* legend_Q2diff = new TLegend(0.7, 0.7, 0.9, 0.9);
 
     deltaQ2_DA->SetFillColorAlpha(sixColourScheme[0], 0.75);
     deltaQ2_DA->Draw("HIST F");
@@ -338,7 +338,7 @@ void DVMP_histograms()
 
 
     TCanvas* C_tdiff = new TCanvas("C_tdiff", "C_tdiff",1100,800);
-    TLegend* legend_tdiff = new TLegend(0.5, 0.7, 0.7, 0.9);
+    TLegend* legend_tdiff = new TLegend(0.7, 0.7, 0.9, 0.9);
 
     deltat_eXBABE->SetFillColorAlpha(sixColourScheme[0], 0.75);
     deltat_eXBABE->Draw("HIST F");
@@ -384,7 +384,7 @@ void DVMP_histograms()
     recont_XbjkC->Draw("ELP SAME");
     legend_t_xbjk->AddEntry(recont_XbjkC, "0.16 < x_{bjk} < 0.25", "p");
 
-    TPaveText* text_t_xbjk = new TPaveText(0.575, 0.495, 0.775, 0.695, "NDC");
+    TPaveText* text_t_xbjk = new TPaveText(0.6, 0.495, 0.8, 0.695, "NDC");
     text_t_xbjk->AddText("ePIC Performance");
     text_t_xbjk->AddText("e+p, 10ex130p");
     text_t_xbjk->AddText("lAger 3.6.1");

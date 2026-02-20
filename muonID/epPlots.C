@@ -51,13 +51,13 @@ void epPlots()
     gROOT->ProcessLine("SetePICStyle()");
     gStyle->SetOptStat(0);
 
-    //TString infile="../eicReconOutput/EICreconOut_JPsiMuMu_10ifb_10x130ep_Pruned.root";
-    TString infile="reconOut/mu-pi_20GeV_reconOut.root";
-    //TString infile="../dis_background/DIS_Q2_1_10_10x130ep_Pruned.root";
+    //TString infile="../eicReconOutput/EICreconOut_JPsiMuMu_10ifb_18x275ep_Pruned.root";
+    //TString infile="reconOut/mu-pi-ka-e-p_20GeV_reconOut.root";
+    TString infile="../dis_background/DIS_Q2_1_10_10x130ep_Pruned.root";
 
-    //std::string outfilename = "outputs/DIS_Q2_1_10_10x130ep_epPlots.root";
-    std::string outfilename = "outputs/mu-pi_epPlots.root";
-    //std::string outfilename = "outputs/JPsiMuMu_10ifb_10x130ep_epPlots.root";
+    //std::string outfilename = "outputs/JPsiMuMu_10ifb_18x275ep_epPlots.root";
+    //std::string outfilename = "outputs/mu-pi-ka-e-p_epPlots.root";
+    std::string outfilename = "outputs/DIS_Q2_1_10_10x130ep_epPlots.root";
 
     // Set output file for the histograms
     TFile *ofile = TFile::Open(outfilename.c_str(),"RECREATE");
@@ -122,6 +122,14 @@ void epPlots()
     TTreeReaderArray<unsigned int> simuAssocEcalBarrel(tree_reader, "EcalBarrelClusterAssociations.simID");
     TTreeReaderArray<unsigned int> recoAssocEcalBarrel(tree_reader, "EcalBarrelClusterAssociations.recID");
     TTreeReaderArray<float> EcalBarrelEng(tree_reader, "EcalBarrelClusters.energy");
+    /*
+    TTreeReaderArray<unsigned int> simuAssocEcalBarrelImg(tree_reader, "EcalBarrelImagingClusterAssociations.simID");
+    TTreeReaderArray<unsigned int> recoAssocEcalBarrelImg(tree_reader, "EcalBarrelImagingClusterAssociations.recID");
+    TTreeReaderArray<float> EcalBarrelImgEng(tree_reader, "EcalBarrelImagingClusters.energy");
+    TTreeReaderArray<unsigned int> simuAssocEcalBarrelScFi(tree_reader, "EcalBarrelScFiClusterAssociations.simID");
+    TTreeReaderArray<unsigned int> recoAssocEcalBarrelScFi(tree_reader, "EcalBarrelScFiClusterAssociations.recID");
+    TTreeReaderArray<float> EcalBarrelScFiEng(tree_reader, "EcalBarrelScFiClusters.energy");
+    */
 
     TTreeReaderArray<unsigned int> simuAssocEcalEndcapP(tree_reader, "EcalEndcapPClusterAssociations.simID");
     TTreeReaderArray<unsigned int> recoAssocEcalEndcapP(tree_reader, "EcalEndcapPClusterAssociations.recID");    
@@ -226,6 +234,12 @@ void epPlots()
     TH2D *kaonEpRecEHcal = new TH2D("kaonEpRecEHcal","Ecal Energy vs Hcal Energy for Kaons; E/p;  E/p",100,0.,2.0,100,0.,2.0);
     TH2D *muonEpRecEHcal = new TH2D("muonEpRecEHcal","Ecal Energy vs Hcal Energy for Muons; E/p;  E/p",100,0.,2.0,100,0.,2.0);
 
+    TH2D *pionEpTrueEcalPlusHcal = new TH2D("pionEpTrueEcalPlusHcal","Ecal Energy / Track Momentum + Hcal Energy / Track Momentum for Pions; p;  E/p",50,0.,25.,100,0.,2.0);
+    TH2D *muonEpTrueEcalPlusHcal = new TH2D("muonEpTrueEcalPlusHcal","Ecal Energy / Track Momentum + Hcal Energy / Track Momentum for Muons; p;  E/p",50,0.,25.,100,0.,2.0);
+
+    TH2D *pionEpTrueEcalPlusHcalvsEta = new TH2D("pionEpTrueEcalPlusHcalvsEta","Ecal Energy / Track Momentum + Hcal Energy / Track Momentum vs Eta for Pions; eta;  E/p",100,-5.,5.,100,0.,2.0);
+    TH2D *muonEpTrueEcalPlusHcalvsEta = new TH2D("muonEpTrueEcalPlusHcalvsEta","Ecal Energy / Track Momentum + Hcal Energy / Track Momentum vs Eta for Muons; eta;  E/p",100,-5.,5.,100,0.,2.0);
+
     // Cluster Size Plots by particle
     TH2D *protonEcalClusterSize = new TH2D("protonEcalClusterSize","Ecal Barrel Cluster Size for Protons; Momentum (GeV/c); Size",50,0.,25.,100,0.,50.);
     TH2D *electronEcalClusterSize = new TH2D("electronEcalClusterSize","Ecal Barrel Cluster Size for Electrons; Momentum (GeV/c); Size",50,0.,25.,100,0.,50.);
@@ -261,14 +275,14 @@ void epPlots()
 
     // E/p cut functions
 
-    TF1 *eCalCutFunction = new TF1("eCalCutFunction","[0]/(x + [1])",0.,20.,0.,20.);
+    TF1 *eCalCutFunction = new TF1("eCalCutFunction","[0]/(x + [1])",0.,20.);
     eCalCutFunction->SetParameter(0,0.29);
     eCalCutFunction->SetParameter(1,0.23);
 
     TF1 *eCalCutWidthFunction = new TF1("eCalCutWidthFunction","3*([0]/x)",0.,20.);
     eCalCutWidthFunction->SetParameter(0,0.09);
 
-    TF1 *hCalCutFunction = new TF1("hCalCutFunction","[0]/(x + [1])",0.,20.,0.,20.);
+    TF1 *hCalCutFunction = new TF1("hCalCutFunction","[0]/(x + [1])",0.,20.);
     hCalCutFunction->SetParameter(0,1.03);
     hCalCutFunction->SetParameter(1,0.44);
 
@@ -403,6 +417,30 @@ void epPlots()
                     }
                 }
             }
+            /*
+            if (EcalBarrelScFiEng.GetSize() == simuAssocEcalBarrelScFi.GetSize() && ECalEnergy == 0.0)
+            {
+                for (int jS = 0; jS < simuAssocEcalBarrelScFi.GetSize(); jS++) // Look for associations in the Ecal Barrel ScFi
+                {
+                    if (simuAssocEcalBarrelScFi[jS] == simuAssoc[i])
+                    {
+                        ECalEnergy += EcalBarrelScFiEng[jS];
+                        EcalHits += 1.;
+                    }
+                }
+            }
+            if (EcalBarrelImgEng.GetSize() == simuAssocEcalBarrelImg.GetSize() && ECalEnergy == 0.0)
+            {
+                for (int jI = 0; jI < simuAssocEcalBarrelImg.GetSize(); jI++) // Look for associations in the Ecal Barrel Preshower
+                {
+                    if (simuAssocEcalBarrelImg[jI] == simuAssoc[i])
+                    {
+                        ECalEnergy += EcalBarrelImgEng[jI];
+                        EcalHits += 1.;
+                    }
+                }
+            }
+            */
             if (EcalEndcapPEng.GetSize() == simuAssocEcalEndcapP.GetSize()) 
             {
                 for (int jP = 0; jP < simuAssocEcalEndcapP.GetSize(); jP++) // Look for associations in the Ecal Endcap P
@@ -424,7 +462,7 @@ void epPlots()
                         EcalHits += 1.;
                     }
                 }
-            }
+            }   
 
             if (HcalBarrelEng.GetSize() == simuAssocHcalBarrel.GetSize())
             {
@@ -522,6 +560,8 @@ void epPlots()
                         pionEpRecHcal->Fill(recoMom.Mag(), HCalEnergy/recoMom.Mag());
                         pionEpTrueEHcal->Fill(ECalEnergy/trueMom.Mag(), HCalEnergy/trueMom.Mag());
                         pionEpRecEHcal->Fill(ECalEnergy/recoMom.Mag(), HCalEnergy/recoMom.Mag());
+                        pionEpTrueEcalPlusHcal->Fill(trueMom.Mag(), (ECalEnergy/trueMom.Mag()) + (HCalEnergy/trueMom.Mag()));
+                        pionEpTrueEcalPlusHcalvsEta->Fill(trueMom.PseudoRapidity(), (ECalEnergy/trueMom.Mag()) + (HCalEnergy/trueMom.Mag()));
                         pionEcalClusterSize->Fill(recoMom.Mag(),EcalHits);
                         pionHcalClusterSize->Fill(recoMom.Mag(),HcalHits);
                         pionEHcalClusterSize->Fill(recoMom.Mag(),EcalHits+HcalHits);
@@ -552,6 +592,8 @@ void epPlots()
                         muonEpRecHcal->Fill(recoMom.Mag(), HCalEnergy/recoMom.Mag());
                         muonEpTrueEHcal->Fill(ECalEnergy/trueMom.Mag(), HCalEnergy/trueMom.Mag());
                         muonEpRecEHcal->Fill(ECalEnergy/recoMom.Mag(), HCalEnergy/recoMom.Mag());
+                        muonEpTrueEcalPlusHcal->Fill(trueMom.Mag(), (ECalEnergy/trueMom.Mag()) + (HCalEnergy/trueMom.Mag()));
+                        muonEpTrueEcalPlusHcalvsEta->Fill(trueMom.PseudoRapidity(), (ECalEnergy/trueMom.Mag()) + (HCalEnergy/trueMom.Mag()));
                         muonEcalClusterSize->Fill(recoMom.Mag(),EcalHits);
                         muonHcalClusterSize->Fill(recoMom.Mag(),HcalHits);
                         muonEHcalClusterSize->Fill(recoMom.Mag(),EcalHits+HcalHits);
@@ -588,6 +630,8 @@ void epPlots()
                         pionRecP->Fill(recoMom.Mag());
                         pionEpTrueEcal->Fill(trueMom.Mag(), ECalEnergy/trueMom.Mag());
                         pionEpRecEcal->Fill(recoMom.Mag(), ECalEnergy/recoMom.Mag());
+                        pionEpTrueEcalPlusHcal->Fill(trueMom.Mag(), (ECalEnergy/trueMom.Mag()));
+                        pionEpTrueEcalPlusHcalvsEta->Fill(trueMom.PseudoRapidity(), (ECalEnergy/trueMom.Mag()));
                         pionEcalClusterSize->Fill(recoMom.Mag(),EcalHits);
                         mupiEpRecEcalvsEta->Fill(recoMom.PseudoRapidity(), ECalEnergy/recoMom.Mag());
                         mupiEpTrueEcalvsEta->Fill(trueMom.PseudoRapidity(), ECalEnergy/trueMom.Mag());
@@ -604,6 +648,8 @@ void epPlots()
                         muonRecP->Fill(recoMom.Mag());
                         muonEpTrueEcal->Fill(trueMom.Mag(), ECalEnergy/trueMom.Mag());
                         muonEpRecEcal->Fill(recoMom.Mag(), ECalEnergy/recoMom.Mag());
+                        muonEpTrueEcalPlusHcalvsEta->Fill(trueMom.PseudoRapidity(), (ECalEnergy/trueMom.Mag()));
+                        muonEpTrueEcalPlusHcalvsEta->Fill(trueMom.PseudoRapidity(), (ECalEnergy/trueMom.Mag()));
                         muonEcalClusterSize->Fill(recoMom.Mag(),EcalHits);
                         mupiEpRecEcalvsEta->Fill(recoMom.PseudoRapidity(), ECalEnergy/recoMom.Mag());
                         mupiEpTrueEcalvsEta->Fill(trueMom.PseudoRapidity(), ECalEnergy/trueMom.Mag());
@@ -636,6 +682,10 @@ void epPlots()
                         pionRecP->Fill(recoMom.Mag());
                         pionEpTrueHcal->Fill(trueMom.Mag(), HCalEnergy/trueMom.Mag());
                         pionEpRecHcal->Fill(recoMom.Mag(), HCalEnergy/recoMom.Mag());
+                        pionEpTrueEcalPlusHcal->Fill(trueMom.Mag(), (HCalEnergy/trueMom.Mag()));
+                        pionEpTrueEcalPlusHcalvsEta->Fill(trueMom.PseudoRapidity(), (HCalEnergy/trueMom.Mag()));
+                        muonEpTrueEcalPlusHcal->Fill(trueMom.Mag(), (HCalEnergy/trueMom.Mag()));
+                        muonEpTrueEcalPlusHcalvsEta->Fill(trueMom.PseudoRapidity(), (HCalEnergy/trueMom.Mag()));
                         pionHcalClusterSize->Fill(recoMom.Mag(),HcalHits);
                         mupiEpRecHcalvsEta->Fill(recoMom.PseudoRapidity(), HCalEnergy/recoMom.Mag());
                         mupiEpTrueHcalvsEta->Fill(trueMom.PseudoRapidity(), HCalEnergy/trueMom.Mag());
@@ -738,7 +788,7 @@ void epPlots()
                 }
                 
 
-                if (recoMom.Mag() > 1 && std::sqrt(TMath::Abs(trackEng[i]*trackEng[i] - recoMom.Mag2())) < 0.2)
+                if (recoMom.Mag() > 1 && std::sqrt(TMath::Abs(trackEng[i]*trackEng[i] - recoMom.Mag2())) < 0.2 && (TMath::Abs(recoMom.Eta()) < 1.0 || (TMath::Abs(recoMom.Eta()) > 1.3)))
                 {
                     energyCutPID->Fill(TMath::Abs(partPdg[simuAssoc[i]]));
                     totalParticles[2] += 1.;
@@ -877,7 +927,7 @@ void epPlots()
     std::cout << "Fake Rate of Muon Sample: " << (totalParticles[0]-muons[0])/totalParticles[0] <<  std::endl;
     std::cout << "" << std::endl;
     std::cout << "After Track PID Cut: " << totalParticles[1] << " | Muons: " << muons[1] << " | Ratio: " << muons[1]/totalParticles[1] << std::endl;
-    std::cout << "After Energy and Mass Cut: " << totalParticles[2] << " | Muons: " << muons[2] << " | Ratio: " << muons[2]/totalParticles[2] << std::endl;
+    std::cout << "After Energy, Mass and Eta Cut: " << totalParticles[2] << " | Muons: " << muons[2] << " | Ratio: " << muons[2]/totalParticles[2] << std::endl;
     std::cout << "After E/p Cut: " << totalParticles[3] << " | Muons: " << muons[3] << " | Ratio: " << muons[3]/totalParticles[3] << std::endl;
     std::cout << "After Cluster Size Cut: " << totalParticles[4] << " | Muons: " << muons[4] << " | Ratio: " << muons[4]/totalParticles[4] << std::endl;
     std::cout << "" << std::endl;
@@ -1197,12 +1247,12 @@ void epPlots()
     EpHcalL->Draw("SAME");
     cEpRecHcal->Update();
 
-    TH1D *muonEpRecHcal_0;
-    TH1D *muonEpRecHcal_1;
-    TH1D *muonEpRecHcal_2;
-    TH1D *pionEpRecHcal_0;
-    TH1D *pionEpRecHcal_1;
-    TH1D *pionEpRecHcal_2;
+    TH1D *muonEpRecHcal_0 = nullptr;
+    TH1D *muonEpRecHcal_1 = nullptr;
+    TH1D *muonEpRecHcal_2 = nullptr;
+    TH1D *pionEpRecHcal_0 = nullptr;
+    TH1D *pionEpRecHcal_1 = nullptr;
+    TH1D *pionEpRecHcal_2 = nullptr;
 
     if (muonEpRecEcal->GetEntries() > 1000 &&  pionEpRecEcal->GetEntries() > 1000)
     {
@@ -1308,6 +1358,18 @@ void epPlots()
         pionEpRecHcal_2->Draw();
         slicesPionEpRecHcal->Update();
     }
+
+    TCanvas *cSumEp = new TCanvas("cSumEp","cSumEp",1100,800);
+    cSumEp->Divide(2,2);
+    cSumEp->cd(1);;
+    pionEpTrueEcalPlusHcal->Draw("COLZ");
+    cSumEp->cd(2);
+    pionEpTrueEcalPlusHcalvsEta->Draw("COLZ");
+    cSumEp->cd(3);
+    muonEpTrueEcalPlusHcal->Draw("COLZ");
+    cSumEp->cd(4);
+    muonEpTrueEcalPlusHcalvsEta->Draw("COLZ");
+    cSumEp->Update();
 
     TCanvas *cEpVsEta = new TCanvas("cEpVsEta","cEpVsEta",1100,800);
     cEpVsEta->Divide(2,2);
@@ -1640,6 +1702,10 @@ void epPlots()
     pionEpTrueEHcal->Write();
     kaonEpTrueEHcal->Write();
     muonEpTrueEHcal->Write();
+    pionEpTrueEcalPlusHcal->Write();
+    pionEpTrueEcalPlusHcalvsEta->Write();
+    muonEpTrueEcalPlusHcal->Write();
+    muonEpTrueEcalPlusHcalvsEta->Write();
     ofile->cd("..");
     ofile->mkdir("recoEHcal");
     ofile->cd("recoEHcal");
@@ -1648,6 +1714,13 @@ void epPlots()
     pionEpRecEHcal->Write();
     kaonEpRecEHcal->Write();
     muonEpRecEHcal->Write();
+    ofile->cd("..");
+    ofile->mkdir("EpVsEta");;
+    ofile->cd("EpVsEta");
+    mupiEpTrueEcalvsEta->Write();
+    mupiEpRecEcalvsEta->Write();
+    mupiEpTrueHcalvsEta->Write();
+    mupiEpRecHcalvsEta->Write();
     ofile->cd("..");
     ofile->mkdir("CalClusterSize");
     ofile->cd("CalClusterSize");

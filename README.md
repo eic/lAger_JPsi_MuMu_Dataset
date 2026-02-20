@@ -44,6 +44,12 @@ For all configurations, the output file was converted to a .hepmc3.tree.root fil
 ./hepmc3ascii2root <OUTPUT_DIRECTORY>/ab_output-00mrad.jpsi-<ELECTRON ENERGY>on<PROTON ENERGY>.4pi.disp-jpsi-00-muon.run00001-lumi10.hepmc <OUTPUT_DIRECTORY>/lAger_v3.6.1_DVMP_JPsi_<ELECTRON ENERGY>x<PROTON ENERGY>ep_q2_1to50.hepmc3.tree.root
 ```
 
+### Skimming files
+
+Due to the large sizes of the output files, these were reduced by a factor of 10 down to 1ifb.
+This was done by taking every tenth event.
+The code for this is **/lAger/skim.C**
+
 ### Output Files
 
 The resulting output files for both configurations, to be used for the simulation campaigns are located at:
