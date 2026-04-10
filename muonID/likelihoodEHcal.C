@@ -52,21 +52,18 @@ void likelihoodEHcal()
     gStyle->SetCanvasPreferGL(true); // enables transparency
 
     std::vector<int> sixColourScheme = {
+    TColor::GetColor("#5790fc"),     // blue
+    TColor::GetColor("#e42536"),     // red
     TColor::GetColor("#7021dd"),     // violet
     TColor::GetColor("#964a8b"),     // grape
-    TColor::GetColor("#e42536"),     // red
     TColor::GetColor("#f89c20"),     // yellow
-    TColor::GetColor("#5790fc"),     // blue
     TColor::GetColor("#9c9ca1"),     // grey
     };
 
-    TString infileN = "outputs/mu-pi_epPlots.root";
+    TString infileN = "outputs/mu-pi_20-100GeV_epPlots.root";
     TFile *inFile = new TFile(infileN);
 
-    std::string outfilename = "outputs/mu-pi_likelihood.root";
-
-    // Set output file for the histograms
-    TFile *ofile = TFile::Open(outfilename.c_str(),"RECREATE");
+    std::string outfilename = "outputs/mu-pi_20-100GeV_likelihood.root";
 
     // Ecal ep Plots by particle
     TH2D *pionEpTrueEcal = (TH2D*) inFile->Get("trueEcalEp/pionEpTrueEcal");
@@ -79,196 +76,90 @@ void likelihoodEHcal()
     TH2D *pionEpTrueHcal = (TH2D*) inFile->Get("trueHcalEp/pionEpTrueHcal");
     TH2D *muonEpTrueHcal = (TH2D*) inFile->Get("trueHcalEp/muonEpTrueHcal");
 
-    TH2D *pionEpRecHcal = (TH2D*) inFile->Get("recoHcalEp/protonEpRecHcal");
-    TH2D *muonEpRecHcal = (TH2D*) inFile->Get("recoHcalEp/protonEpRecHcal");
+    TH2D *pionEpRecHcal = (TH2D*) inFile->Get("recoHcalEp/pionEpRecHcal");
+    TH2D *muonEpRecHcal = (TH2D*) inFile->Get("recoHcalEp/muonEpRecHcal");
 
 
-    TH1D *EpTrueEcal[20][2];
-    TH1D *EpRecEcal[20][2];
-    TH1D *EpTrueHcal[20][2];
-    TH1D *EpRecHcal[20][2];
+    TH1D *pionEcalProbabilities[pionEpRecEcal->GetNbinsX()];
+    TH1D *muonEcalProbabilities[muonEpRecEcal->GetNbinsX()];
 
-    std::string particleNameList[2] = {"Muon", "Pion"};
+    TH1D *pionHcalProbabilities[pionEpRecHcal->GetNbinsX()];
+    TH1D *muonHcalProbabilities[muonEpRecHcal->GetNbinsX()];
+    
 
-    for (int particleCount = 0; particleCount < 2; particleCount++)
-    {
+    for (int iE = 1; iE <= pionEpRecEcal->GetNbinsX(); iE++) {
+        pionEcalProbabilities[iE-1] = pionEpRecEcal->ProjectionY(Form("pionEcalProbabilities_bin%d", iE), iE, iE);
+        muonEcalProbabilities[iE-1] = muonEpRecEcal->ProjectionY(Form("muonEcalProbabilities_bin%d", iE), iE, iE);
+        
+        // CRITICAL: Detach from the input file so they stay in memory
+        pionEcalProbabilities[iE-1]->SetDirectory(0);
+        muonEcalProbabilities[iE-1]->SetDirectory(0);
 
-        for (int momCount = 0; momCount < 20; momCount++)
-        {
-            std::string histN = particleNameList[particleCount] + std::string("EpTrueEcalMomBin") + std::to_string(momCount);
-            TString histNT = histN;
-            std::string histT = particleNameList[particleCount] + std::string("True Ecal E/p for Momentum Bin: ") + std::to_string(std::round((momCount+0.5)*10)/10) + " GeV";
-            TString histTT = histT;
-
-            EpTrueEcal[momCount][particleCount] = new TH1D(histNT, histTT, 100.,0.,2.0);
-        }
-
-        for (int momCount = 0; momCount < 20; momCount++)
-        {
-            std::string histN = particleNameList[particleCount] + std::string("EpRecEcalMomBin") + std::to_string(momCount);
-            TString histNT = histN;
-            std::string histT = particleNameList[particleCount] + std::string("Reconstructed Ecal E/p for Momentum Bin: ") + std::to_string(std::round((momCount+0.5)*10)/10) + " GeV";
-            TString histTT = histT;
-
-            EpRecEcal[momCount][particleCount] = new TH1D(histNT, histTT, 100.,0.,2.0);
-        }
-
-        for (int momCount = 0; momCount < 20; momCount++)
-        {
-            std::string histN = particleNameList[particleCount] + std::string("EpTrueHcalMomBin") + std::to_string(momCount);
-            TString histNT = histN;
-            std::string histT = particleNameList[particleCount] + std::string("True Hcal E/p for Momentum Bin: ") + std::to_string(std::round((momCount+0.5)*10)/10) + " GeV";
-            TString histTT = histT;
-
-            EpTrueHcal[momCount][particleCount] = new TH1D(histNT, histTT, 100.,0.,2.0);
-        }
-
-        for (int momCount = 0; momCount < 20; momCount++)
-        {
-            std::string histN = particleNameList[particleCount] + std::string("EpRecHcalMomBin") + std::to_string(momCount);
-            TString histNT = histN;
-            std::string histT = particleNameList[particleCount] + std::string("Reconstructed Hcal E/p for Momentum Bin: ") + std::to_string(std::round((momCount+0.5)*10)/10) + " GeV";
-            TString histTT = histT;
-
-            EpRecHcal[momCount][particleCount] = new TH1D(histNT, histTT, 100.,0.,2.0);
-        }
-
+        if (pionEcalProbabilities[iE-1]->Integral() != 0) pionEcalProbabilities[iE-1]->Scale(1.0/pionEcalProbabilities[iE-1]->Integral());
+        if (muonEcalProbabilities[iE-1]->Integral() != 0) muonEcalProbabilities[iE-1]->Scale(1.0/muonEcalProbabilities[iE-1]->Integral());
     }
 
-    for (int binCount = 1; binCount < muonEpTrueEcal->GetNbinsX(); binCount++)
-    {
+    for (int iH = 1; iH <= pionEpRecHcal->GetNbinsX(); iH++) {
+        pionHcalProbabilities[iH-1] = pionEpRecHcal->ProjectionY(Form("pionHcalProbabilities_bin%d", iH), iH, iH);
+        muonHcalProbabilities[iH-1] = muonEpRecHcal->ProjectionY(Form("muonHcalProbabilities_bin%d", iH), iH, iH);
 
-        int momBin = int(muonEpTrueEcal->GetXaxis()->GetBinCenter(binCount));
+        // CRITICAL: Detach from the input file so they stay in memory
+        pionHcalProbabilities[iH-1]->SetDirectory(0);
+        muonHcalProbabilities[iH-1]->SetDirectory(0);
 
-        if (momBin >= 20) break;
-
-        for (int yBinCount = 1; yBinCount < muonEpTrueEcal->GetNbinsY(); yBinCount++)
-        {
-            EpTrueEcal[momBin][0]->Fill(muonEpTrueEcal->GetYaxis()->GetBinCenter(yBinCount), muonEpTrueEcal->GetBinContent(binCount, yBinCount));
-            EpTrueEcal[momBin][1]->Fill(pionEpTrueEcal->GetYaxis()->GetBinCenter(yBinCount), pionEpTrueEcal->GetBinContent(binCount, yBinCount));
-
-            EpRecEcal[momBin][0]->Fill(muonEpRecEcal->GetYaxis()->GetBinCenter(yBinCount), muonEpRecEcal->GetBinContent(binCount, yBinCount));
-            EpRecEcal[momBin][1]->Fill(pionEpRecEcal->GetYaxis()->GetBinCenter(yBinCount), pionEpRecEcal->GetBinContent(binCount, yBinCount));
-
-            EpTrueHcal[momBin][0]->Fill(muonEpTrueHcal->GetYaxis()->GetBinCenter(yBinCount), muonEpTrueHcal->GetBinContent(binCount, yBinCount));
-            EpTrueHcal[momBin][1]->Fill(pionEpTrueHcal->GetYaxis()->GetBinCenter(yBinCount), pionEpTrueHcal->GetBinContent(binCount, yBinCount));
-
-            EpRecHcal[momBin][0]->Fill(muonEpRecHcal->GetYaxis()->GetBinCenter(yBinCount), muonEpRecHcal->GetBinContent(binCount, yBinCount));
-            EpRecHcal[momBin][1]->Fill(pionEpRecHcal->GetYaxis()->GetBinCenter(yBinCount), pionEpRecHcal->GetBinContent(binCount, yBinCount));
-
-        }
+        if (pionHcalProbabilities[iH-1]->Integral() != 0) pionHcalProbabilities[iH-1]->Scale(1.0/pionHcalProbabilities[iH-1]->Integral());
+        if (muonHcalProbabilities[iH-1]->Integral() != 0) muonHcalProbabilities[iH-1]->Scale(1.0/muonHcalProbabilities[iH-1]->Integral());
     }
 
-    TCanvas *canvas_EpTrueEcal = new TCanvas("canvas_EpTrueEcal","canvas_EpTrueEcal",1100,800);
-    canvas_EpTrueEcal->Divide(4,5);
-    for (int momCount = 0; momCount < 20; momCount++)
-    {
-        EpTrueEcal[momCount][0]->SetLineColor(sixColourScheme[4]);
-        EpTrueEcal[momCount][0]->SetFillStyle(1001);
-        EpTrueEcal[momCount][0]->SetFillColorAlpha(sixColourScheme[4], 0.25);
-
-        EpTrueEcal[momCount][1]->SetLineColor(sixColourScheme[2]);
-        EpTrueEcal[momCount][1]->SetFillStyle(1001);
-        EpTrueEcal[momCount][1]->SetFillColorAlpha(sixColourScheme[2], 0.25);
-
-        canvas_EpTrueEcal->cd(momCount+1);
-        EpTrueEcal[momCount][0]->Draw("HIST");
-        EpTrueEcal[momCount][1]->Draw("HIST SAME");
+    TCanvas *c_EcalProbabilities = new TCanvas("c_EcalProbabilities", "Ecal Probabilities", 1200, 800);
+    c_EcalProbabilities->Divide(pionEpRecEcal->GetNbinsX()/4, 4);
+    for (int i = 0; i < pionEpRecEcal->GetNbinsX(); i++) {
+        c_EcalProbabilities->cd(i+1);
+        pionEcalProbabilities[i]->SetLineColor(sixColourScheme[0]);
+        muonEcalProbabilities[i]->SetLineColor(sixColourScheme[1]);
+        pionEcalProbabilities[i]->SetMarkerColor(sixColourScheme[0]);
+        muonEcalProbabilities[i]->SetMarkerColor(sixColourScheme[1]);
+        pionEcalProbabilities[i]->SetMarkerStyle(20);
+        muonEcalProbabilities[i]->SetMarkerStyle(21);
+        pionEcalProbabilities[i]->Draw("HIST P");
+        muonEcalProbabilities[i]->Draw("HIST P SAME");
     }
+    c_EcalProbabilities->Update();
 
-    canvas_EpTrueEcal->Update();
-
-    TCanvas *canvas_EpRecEcal = new TCanvas("canvas_EpRecEcal","canvas_EpRecEcal",1100,800);
-    canvas_EpRecEcal->Divide(4,5);
-    for (int momCount = 0; momCount < 20; momCount++)
-    {
-        EpRecEcal[momCount][0]->SetLineColor(sixColourScheme[4]);
-        EpRecEcal[momCount][0]->SetFillStyle(1001);
-        EpRecEcal[momCount][0]->SetFillColorAlpha(sixColourScheme[4], 0.25);
-
-        EpRecEcal[momCount][1]->SetLineColor(sixColourScheme[2]);
-        EpRecEcal[momCount][1]->SetFillStyle(1001);
-        EpRecEcal[momCount][1]->SetFillColorAlpha(sixColourScheme[2], 0.25);
-
-        canvas_EpRecEcal->cd(momCount+1);
-        EpRecEcal[momCount][0]->Draw("HIST");
-        EpRecEcal[momCount][1]->Draw("HIST SAME");
+    TCanvas *c_HcalProbabilities = new TCanvas("c_HcalProbabilities", "Hcal Probabilities", 1200, 800);
+    c_HcalProbabilities->Divide(pionEpRecHcal->GetNbinsX()/4, 4);
+    for (int i = 0; i < pionEpRecHcal->GetNbinsX(); i++) {
+        c_HcalProbabilities->cd(i+1);
+        pionHcalProbabilities[i]->SetLineColor(sixColourScheme[0]);
+        muonHcalProbabilities[i]->SetLineColor(sixColourScheme[1]);
+        pionHcalProbabilities[i]->SetMarkerColor(sixColourScheme[0]);
+        muonHcalProbabilities[i]->SetMarkerColor(sixColourScheme[1]);
+        pionHcalProbabilities[i]->SetMarkerStyle(20);
+        muonHcalProbabilities[i]->SetMarkerStyle(21);
+        pionHcalProbabilities[i]->Draw("HIST P");
+        muonHcalProbabilities[i]->Draw("HIST P SAME");
     }
+    c_HcalProbabilities->Update();
 
-    canvas_EpRecEcal->Update();
 
-    TCanvas *canvas_EpTrueHcal = new TCanvas("canvas_EpTrueHcal","canvas_EpTrueHcal",1100,800);
-    canvas_EpTrueHcal->Divide(4,5);
-    for (int momCount = 0; momCount < 20; momCount++)
-    {
-        EpTrueHcal[momCount][0]->SetLineColor(sixColourScheme[4]);
-        EpTrueHcal[momCount][0]->SetFillStyle(1001);
-        EpTrueHcal[momCount][0]->SetFillColorAlpha(sixColourScheme[4], 0.25);
-
-        EpTrueHcal[momCount][1]->SetLineColor(sixColourScheme[2]);
-        EpTrueHcal[momCount][1]->SetFillStyle(1001);
-        EpTrueHcal[momCount][1]->SetFillColorAlpha(sixColourScheme[2], 0.25);
-
-        canvas_EpTrueHcal->cd(momCount+1);
-        EpTrueHcal[momCount][0]->Draw("HIST");
-        EpTrueHcal[momCount][1]->Draw("HIST SAME");
-    }
-
-    canvas_EpTrueHcal->Update();
-
-    TCanvas *canvas_EpRecHcal = new TCanvas("canvas_EpRecHcal","canvas_EpRecHcal",1100,800);
-    canvas_EpRecHcal->Divide(4,5);
-    for (int momCount = 0; momCount < 20; momCount++)
-    {
-        EpRecHcal[momCount][0]->SetLineColor(sixColourScheme[4]);
-        EpRecHcal[momCount][0]->SetFillStyle(1001);
-        EpRecHcal[momCount][0]->SetFillColorAlpha(sixColourScheme[4], 0.25);
-
-        EpRecHcal[momCount][1]->SetLineColor(sixColourScheme[2]);
-        EpRecHcal[momCount][1]->SetFillStyle(1001);
-        EpRecHcal[momCount][1]->SetFillColorAlpha(sixColourScheme[2], 0.25);
-
-        canvas_EpRecHcal->cd(momCount+1);
-        EpRecHcal[momCount][0]->Draw("HIST");
-        EpRecHcal[momCount][1]->Draw("HIST SAME");
-    }
-
-    canvas_EpRecHcal->Update();
+    // Set output file for the histograms
+    TFile *ofile = TFile::Open(outfilename.c_str(),"RECREATE");
 
 
     ofile->cd();
-    ofile->mkdir("EpTrueEcal");
-    ofile->cd("EpTrueEcal");
-    for (int momCount = 0; momCount < 20; momCount++)
-    {
-        EpTrueEcal[momCount][0]->Write();
-        EpTrueEcal[momCount][1]->Write();
+    ofile->mkdir("eCalProbabilities");
+    ofile->cd("eCalProbabilities");
+    for (int i = 0; i < pionEpRecEcal->GetNbinsX(); i++) {
+        pionEcalProbabilities[i]->Write();
+        muonEcalProbabilities[i]->Write();
     }
-    ofile->cd("..");
-    ofile->mkdir("EpRecEcal");
-    ofile->cd("EpRecEcal");
-    for (int momCount = 0; momCount < 20; momCount++)
-    {
-        EpRecEcal[momCount][0]->Write();
-        EpRecEcal[momCount][1]->Write();
+    ofile->cd("..");    
+    ofile->mkdir("hCalProbabilities");
+    ofile->cd("hCalProbabilities");
+    for (int i = 0; i < pionEpRecHcal->GetNbinsX(); i++) {
+        pionHcalProbabilities[i]->Write();
+        muonHcalProbabilities[i]->Write();  
     }
-    ofile->cd("..");
-    ofile->mkdir("EpTrueHcal");
-    ofile->cd("EpTrueHcal");
-    for (int momCount = 0; momCount < 20; momCount++)
-    {
-        EpTrueHcal[momCount][0]->Write();
-        EpTrueHcal[momCount][1]->Write();
-    }
-    ofile->cd("..");
-    ofile->mkdir("EpRecHcal");
-    ofile->cd("EpRecHcal");
-    for (int momCount = 0; momCount < 20; momCount++)
-    {
-        EpRecHcal[momCount][0]->Write();
-        EpRecHcal[momCount][1]->Write();
-    }
-
     ofile->cd("..");
     ofile->Close();
 }
