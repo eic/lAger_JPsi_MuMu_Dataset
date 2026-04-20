@@ -44,7 +44,7 @@
 
 #include "../ePICStyle.C"
 
-void likelihoodEHcal()
+void epVpPlots()
 {
     //gROOT->SetBatch(kTRUE);
     //gROOT->ProcessLine("SetePICStyle()");
@@ -63,7 +63,7 @@ void likelihoodEHcal()
     TString infileN = "outputs/mu-pi_20-100GeV_epPlots.root";
     TFile *inFile = new TFile(infileN);
 
-    std::string outfilename = "outputs/mu-pi_20-100GeV_likelihood.root";
+    std::string outfilename = "outputs/mu-pi_20-100GeV_EpVp.root";
 
     // Ecal ep Plots by particle
     TH2D *pionEpTrueEcal = (TH2D*) inFile->Get("trueEcalEp/pionEpTrueEcal");

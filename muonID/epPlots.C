@@ -51,12 +51,12 @@ void epPlots()
     gROOT->ProcessLine("SetePICStyle()");
     gStyle->SetOptStat(0);
 
-    //TString infile="../eicReconOutput/SimCampaign_JPsiMuMu_10ifb_10x130ep_Pruned.root";
-    TString infile="reconOut/mu-pi_100GeV_reconOut.root";
+    TString infile="../eicReconOutput/SimCampaign_JPsiMuMu_10ifb_10x130ep_Pruned.root";
+    //TString infile="reconOut/mu-pi_100GeV_reconOut.root";
     //TString infile="../dis_background/DIS_Q2_1_10_10x130ep_Pruned.root";
 
-    //std::string outfilename = "outputs/SimCampaign_JPsiMuMu_10ifb_10x130ep_epPlots.root";
-    std::string outfilename = "outputs/mu-pi_100GeV_epPlots.root";
+    std::string outfilename = "outputs/SimCampaign_JPsiMuMu_10ifb_10x130ep_epPlots.root";
+    //std::string outfilename = "outputs/mu-pi_100GeV_epPlots.root";
     //std::string outfilename = "outputs/DIS_Q2_1_10_10x130ep_epPlots.root";
 
     double EndcapNHcal_Factor = 1.0/6.0;

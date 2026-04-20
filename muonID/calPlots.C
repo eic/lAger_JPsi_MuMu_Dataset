@@ -43,7 +43,6 @@
 
 void calPlots()
 {
-
     TString infile="reconOut/mu_20GeV_reconOut.root";
     std::string outfilename = "outputs/muCalPlotsOutput.root";
 
@@ -182,8 +181,6 @@ void calPlots()
     TTreeReaderArray<float> HcalEndcapNHitsZ(tree_reader, "HcalEndcapNRecHits.position.z");
 
 
-
-
     // Define histograms
 
     TH2D *h_EcalHitsXY = new TH2D("h_EcalHitsXY","Ecal Hits XY; x (mm); y (mm)",125,-2500.,2500.,125,-2500.,2500.);
@@ -219,7 +216,26 @@ void calPlots()
     TH2D *h_HcalEndcapPHitsRadiusVsE = new TH2D("h_HcalEndcapPHitsRadiusVsE","Hcal Endcap P Hits Radius vs Energy; Radius (mm); Energy (GeV)",125,0.,5000.,100,0.,10.);
     TH2D *h_HcalEndcapNHitsRadiusVsE = new TH2D("h_HcalEndcapNHitsRadiusVsE","Hcal Endcap N Hits Radius vs Energy; Radius (mm); Energy (GeV)",125,0.,5000.,100,0.,10.);
     TH2D *h_HcalLFHitsRadiusVsE = new TH2D("h_HcalLFHitsRadiusVsE","Hcal LF Hits Radius vs Energy; Radius (mm); Energy (GeV)",125,0.,5000.,100,0.,10.);
-    
+
+
+    TH1D *h_EcalBarrelImagingHitsSize = new TH1D("h_EcalBarrelImagingHitsSize","Ecal Barrel Imaging Hits Size; Size",125,0.,50.);
+    TH1D *h_EcalBarrelScFiHitsSize = new TH1D("h_EcalBarrelScFiHitsSize","Ecal Barrel ScFi Hits Size; Size",125,0.,50.);
+    TH1D *h_EcalEndcapPHitsSize = new TH1D("h_EcalEndcapPHitsSize","Ecal Endcap P Hits Size; Size",125,0.,50.);
+    TH1D *h_EcalEndcapNHitsSize = new TH1D("h_EcalEndcapNHitsSize","Ecal Endcap N Hits Size; Size",125,0.,50.);
+    TH2D *h_EcalBarrelImagingHitsSizeVsE = new TH2D("h_EcalBarrelImagingHitsSizeVsE","Ecal Barrel Imaging Hits Size vs Energy; Size; Energy (GeV)",125,0.,50.,100,0.,10.);
+    TH2D *h_EcalBarrelScFiHitsSizeVsE = new TH2D("h_EcalBarrelScFiHitsSizeVsE","Ecal Barrel ScFi Hits Size vs Energy; Size; Energy (GeV)",125,0.,50.,100,0.,10.);
+    TH2D *h_EcalEndcapPHitsSizeVsE = new TH2D("h_EcalEndcapPHitsSizeVsE","Ecal Endcap P Hits Size vs Energy; Size; Energy (GeV)",125,0.,50.,100,0.,10.);
+    TH2D *h_EcalEndcapNHitsSizeVsE = new TH2D("h_EcalEndcapNHitsSizeVsE","Ecal Endcap N Hits Size vs Energy; Size; Energy (GeV)",125,0.,50.,100,0.,10.);
+
+    TH1D *h_HcalBarrelHitsSize = new TH1D("h_HcalBarrelHitsSize","Hcal Barrel Hits Size; Size",125,0.,50.);
+    TH1D *h_HcalEndcapPHitsSize = new TH1D("h_HcalEndcapPHitsSize","Hcal Endcap P Hits Size; Size",125,0.,50.);
+    TH1D *h_HcalEndcapNHitsSize = new TH1D("h_HcalEndcapNHitsSize","Hcal Endcap N Hits Size; Size",125,0.,50.);
+    TH1D *h_HcalLFHitsSize = new TH1D("h_HcalLFHitsSize","LFHcal Hits Size; Size",125,0.,50.);
+    TH2D *h_HcalBarrelHitsSizeVsE = new TH2D("h_HcalBarrelHitsSizeVsE","Hcal Barrel Hits Size vs Energy; Size; Energy (GeV)",125,0.,50.,100,0.,10.);
+    TH2D *h_HcalEndcapPHitsSizeVsE = new TH2D("h_HcalEndcapPHitsSizeVsE","Hcal Endcap P Hits Size vs Energy; Size; Energy (GeV)",125,0.,50.,100,0.,10.);
+    TH2D *h_HcalEndcapNHitsSizeVsE = new TH2D("h_HcalEndcapNHitsSizeVsE","Hcal Endcap N Hits Size vs Energy; Size; Energy (GeV)",125,0.,50.,100,0.,10.);
+    TH2D *h_HcalLFHitsSizeVsE = new TH2D("h_HcalLFHitsSizeVsE","Hcal LF Hits Size vs Energy; Size; Energy (GeV)",125,0.,50.,100,0.,10.);
+
 
     int eventID = 0;
     double maxEcalImgRadius = 0., maxEcalScFiRadius = 0., maxEcalPEndcapRadius = 0., maxEcalNEndcapRadius = 0., maxHcalRadius = 0., maxHcalPEndcapRadius = 0., maxHcalNEndcapRadius = 0., maxHcalLFRadius = 0.;
@@ -275,6 +291,8 @@ void calPlots()
       {
         h_EcalBarrelImagingHitsRadius->Fill(maxEcalImgRadius);
         h_EcalBarrelImagingHitsRadiusVsE->Fill(maxEcalImgRadius,maxEcalImgEnergy);
+        h_EcalBarrelImagingHitsSize->Fill(EcalBarrelImagingHitsEng.GetSize());
+        h_EcalBarrelImagingHitsSizeVsE->Fill(EcalBarrelImagingHitsEng.GetSize(),maxEcalImgEnergy);
       }
       maxEhit = 0.;
 
@@ -304,6 +322,8 @@ void calPlots()
       {
         h_EcalBarrelScFiHitsRadius->Fill(maxEcalScFiRadius);
         h_EcalBarrelScFiHitsRadiusVsE->Fill(maxEcalScFiRadius,maxEcalScFiEnergy);
+        h_EcalBarrelScFiHitsSize->Fill(EcalBarrelScFiHitsEng.GetSize());
+        h_EcalBarrelScFiHitsSizeVsE->Fill(EcalBarrelScFiHitsEng.GetSize(),maxEcalScFiEnergy);
       }
       maxEhit = 0.;
 
@@ -334,6 +354,8 @@ void calPlots()
       {
         h_EcalEndcapPHitsRadius->Fill(maxEcalPEndcapRadius);
         h_EcalEndcapPHitsRadiusVsE->Fill(maxEcalPEndcapRadius,maxEcalPEndcapEnergy);
+        h_EcalEndcapPHitsSize->Fill(EcalEndcapPHitsEng.GetSize());
+        h_EcalEndcapPHitsSizeVsE->Fill(EcalEndcapPHitsEng.GetSize(),maxEcalPEndcapEnergy);
       }
       maxEhit = 0.;
 
@@ -364,6 +386,8 @@ void calPlots()
       {
         h_EcalEndcapNHitsRadius->Fill(maxEcalNEndcapRadius);
         h_EcalEndcapNHitsRadiusVsE->Fill(maxEcalNEndcapRadius,maxEcalNEndcapEnergy);
+        h_EcalEndcapNHitsSize->Fill(EcalEndcapNHitsEng.GetSize());
+        h_EcalEndcapNHitsSizeVsE->Fill(EcalEndcapNHitsEng.GetSize(),maxEcalNEndcapEnergy);
       }
       maxEhit = 0.;
 
@@ -395,6 +419,8 @@ void calPlots()
       {
         h_HcalBarrelHitsRadius->Fill(maxHcalRadius);
         h_HcalBarrelHitsRadiusVsE->Fill(maxHcalRadius,maxHcalEnergy);
+        h_HcalBarrelHitsSize->Fill(HcalBarrelHitsEng.GetSize());
+        h_HcalBarrelHitsSizeVsE->Fill(HcalBarrelHitsEng.GetSize(),maxHcalEnergy);
       }
       maxEhit = 0.;
 
@@ -425,6 +451,8 @@ void calPlots()
       {
         h_HcalEndcapPHitsRadius->Fill(maxHcalPEndcapRadius);
         h_HcalEndcapPHitsRadiusVsE->Fill(maxHcalPEndcapRadius,maxHcalPEndcapEnergy);
+        h_HcalEndcapPHitsSize->Fill(HcalEndcapPHitsEng.GetSize());
+        h_HcalEndcapPHitsSizeVsE->Fill(HcalEndcapPHitsEng.GetSize(),maxHcalPEndcapEnergy);
       }
       maxEhit = 0.;
 
@@ -454,6 +482,8 @@ void calPlots()
       {
         h_HcalEndcapNHitsRadius->Fill(maxHcalNEndcapRadius);
         h_HcalEndcapNHitsRadiusVsE->Fill(maxHcalNEndcapRadius,maxHcalNEndcapEnergy);
+        h_HcalEndcapNHitsSize->Fill(HcalEndcapNHitsEng.GetSize());
+        h_HcalEndcapNHitsSizeVsE->Fill(HcalEndcapNHitsEng.GetSize(),maxHcalNEndcapEnergy);
       }
       maxEhit = 0.;
 
@@ -485,6 +515,8 @@ void calPlots()
       {
         h_HcalLFHitsRadius->Fill(maxHcalLFRadius);
         h_HcalLFHitsRadiusVsE->Fill(maxHcalLFRadius,maxHcalLFEnergy);
+        h_HcalLFHitsSize->Fill(HcalLFHitsEng.GetSize());
+        h_HcalLFHitsSizeVsE->Fill(HcalLFHitsEng.GetSize(),maxHcalLFEnergy);
       }
 
       /*
@@ -546,5 +578,26 @@ void calPlots()
     h_HcalEndcapNHitsRadiusVsE->Write();
     h_HcalLFHitsRadiusVsE->Write();
     ofile->cd("..");
+    ofile->mkdir("sizePlots");
+    ofile->cd("sizePlots");
+    h_EcalBarrelImagingHitsSize->Write();
+    h_EcalBarrelScFiHitsSize->Write();
+    h_EcalEndcapPHitsSize->Write();
+    h_EcalEndcapNHitsSize->Write();
+    h_HcalBarrelHitsSize->Write();
+    h_HcalEndcapPHitsSize->Write();
+    h_HcalEndcapNHitsSize->Write();
+    h_HcalLFHitsSize->Write();
+    ofile->cd("..");
+    ofile->mkdir("sizeVsEPlots");
+    ofile->cd("sizeVsEPlots");
+    h_EcalBarrelImagingHitsSizeVsE->Write();  
+    h_EcalBarrelScFiHitsSizeVsE->Write();
+    h_EcalEndcapPHitsSizeVsE->Write();
+    h_EcalEndcapNHitsSizeVsE->Write();
+    h_HcalBarrelHitsSizeVsE->Write();
+    h_HcalEndcapPHitsSizeVsE->Write();
+    h_HcalEndcapNHitsSizeVsE->Write();
+    h_HcalLFHitsSizeVsE->Write();
     ofile->Close();
 }
