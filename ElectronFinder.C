@@ -15,7 +15,7 @@
 
 bool IsElectron(TVector3 trackMom, int simuID,
             TTreeReaderArray<float>& EcalBarrelEng, TTreeReaderArray<float>& EcalEndcapPEng, TTreeReaderArray<float>& EcalEndcapNEng, 
-            TTreeReaderArray<unsigned int>& simuAssocEcalBarrel, TTreeReaderArray<unsigned int>& simuAssocEcalEndcapP, TTreeReaderArray<unsigned int>& simuAssocEcalEndcapN)
+            TTreeReaderArray<int>& simuAssocEcalBarrel, TTreeReaderArray<int>& simuAssocEcalEndcapP, TTreeReaderArray<int>& simuAssocEcalEndcapN)
 {
 
     double ECalEnergy = 0.0;

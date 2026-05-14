@@ -17,8 +17,8 @@
 bool IsMuon(TVector3 trackMom, int simuID,
             TTreeReaderArray<float>& EcalBarrelEng, TTreeReaderArray<float>& EcalEndcapPEng, TTreeReaderArray<float>& EcalEndcapNEng, 
             TTreeReaderArray<float>& HcalBarrelEng, TTreeReaderArray<float>& HcalEndcapPEng, TTreeReaderArray<float>& LFHcalEng, TTreeReaderArray<float>& HcalEndcapNEng, 
-            TTreeReaderArray<unsigned int>& simuAssocEcalBarrel, TTreeReaderArray<unsigned int>& simuAssocEcalEndcapP, TTreeReaderArray<unsigned int>& simuAssocEcalEndcapN,
-            TTreeReaderArray<unsigned int>& simuAssocHcalBarrel, TTreeReaderArray<unsigned int>& simuAssocHcalEndcapP, TTreeReaderArray<unsigned int>& simuAssocLFHcal, TTreeReaderArray<unsigned int>& simuAssocHcalEndcapN)
+            TTreeReaderArray<int>& simuAssocEcalBarrel, TTreeReaderArray<int>& simuAssocEcalEndcapP, TTreeReaderArray<int>& simuAssocEcalEndcapN,
+            TTreeReaderArray<int>& simuAssocHcalBarrel, TTreeReaderArray<int>& simuAssocHcalEndcapP, TTreeReaderArray<int>& simuAssocLFHcal, TTreeReaderArray<int>& simuAssocHcalEndcapN)
 {
 
     double ECalEnergy = 0.0;

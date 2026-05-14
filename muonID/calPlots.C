@@ -43,7 +43,7 @@
 
 void calPlots()
 {
-    TString infile="reconOut/mu_20GeV_reconOut.root";
+    TString infile="reconOut/mu_20-100GeV_reconOut.root";
     std::string outfilename = "outputs/muCalPlotsOutput.root";
 
     // Set output file for the histograms
@@ -86,14 +86,14 @@ void calPlots()
     TTreeReaderArray<float> ttrackMass(tree_reader, "ReconstructedTruthSeededChargedParticles.mass");
     TTreeReaderArray<float> ttrackCharge(tree_reader, "ReconstructedTruthSeededChargedParticles.charge");
     TTreeReaderArray<float> ttrackEng(tree_reader, "ReconstructedTruthSeededChargedParticles.energy");
-
+    
     // Get Associations Between MCParticles and ReconstructedChargedParticles
-    TTreeReaderArray<unsigned int> recoAssoc(tree_reader, "ReconstructedChargedParticleAssociations.recID");
-    TTreeReaderArray<unsigned int> simuAssoc(tree_reader, "ReconstructedChargedParticleAssociations.simID");
+    TTreeReaderArray<int> recoAssoc(tree_reader, "_ReconstructedChargedParticleAssociations_rec.index");
+    TTreeReaderArray<int> simuAssoc(tree_reader, "_ReconstructedChargedParticleAssociations_sim.index");
 
     // Get B0 Information
-    TTreeReaderArray<unsigned int> recoAssocB0(tree_reader, "B0ECalClusterAssociations.recID");
-    TTreeReaderArray<unsigned int> simuAssocB0(tree_reader, "B0ECalClusterAssociations.simID");
+    TTreeReaderArray<int> recoAssocB0(tree_reader, "_B0ECalClusterAssociations_rec.index");
+    TTreeReaderArray<int> simuAssocB0(tree_reader, "_B0ECalClusterAssociations_sim.index");
     TTreeReaderArray<float> B0Eng(tree_reader, "B0ECalClusters.energy");
     TTreeReaderArray<float> B0z(tree_reader, "B0ECalClusters.position.z");
 
@@ -107,13 +107,12 @@ void calPlots()
     TTreeReaderArray<float> OffMEng(tree_reader, "ForwardOffMRecParticles.energy");
 
     // Ecal Information
-    TTreeReaderArray<unsigned int> simuAssocEcalBarrel(tree_reader, "EcalBarrelClusterAssociations.simID");
-    TTreeReaderArray<unsigned int> recoAssocEcalBarrel(tree_reader, "EcalBarrelClusterAssociations.recID");
+    TTreeReaderArray<int> simuAssocEcalBarrel(tree_reader, "_EcalBarrelClusterAssociations_sim.index");
+    TTreeReaderArray<int> recoAssocEcalBarrel(tree_reader, "_EcalBarrelClusterAssociations_rec.index");
     TTreeReaderArray<float> EcalBarrelEng(tree_reader, "EcalBarrelClusters.energy");
 
     TTreeReaderArray<float> EcalBarrelImagingEng(tree_reader, "EcalBarrelImagingClusters.energy");
     TTreeReaderArray<float> EcalBarrelScFiEng(tree_reader, "EcalBarrelScFiClusters.energy");
-
 
     TTreeReaderArray<float> EcalBarrelImagingHitsEng(tree_reader, "EcalBarrelImagingRecHits.energy");
     TTreeReaderArray<float> EcalBarrelImagingHitsX(tree_reader, "EcalBarrelImagingRecHits.position.x");
@@ -125,8 +124,8 @@ void calPlots()
     TTreeReaderArray<float> EcalBarrelScFiHitsY(tree_reader, "EcalBarrelScFiRecHits.position.y");
     TTreeReaderArray<float> EcalBarrelScFiHitsZ(tree_reader, "EcalBarrelScFiRecHits.position.z");
 
-    TTreeReaderArray<unsigned int> simuAssocEcalEndcapP(tree_reader, "EcalEndcapPClusterAssociations.simID");
-    TTreeReaderArray<unsigned int> recoAssocEcalEndcapP(tree_reader, "EcalEndcapPClusterAssociations.recID");    
+    TTreeReaderArray<int> simuAssocEcalEndcapP(tree_reader, "_EcalEndcapPClusterAssociations_sim.index");
+    TTreeReaderArray<int> recoAssocEcalEndcapP(tree_reader, "_EcalEndcapPClusterAssociations_rec.index");    
     TTreeReaderArray<float> EcalEndcapPEng(tree_reader, "EcalEndcapPClusters.energy");
 
     TTreeReaderArray<float> EcalEndcapPHitsEng(tree_reader, "EcalEndcapPRecHits.energy");
@@ -134,8 +133,8 @@ void calPlots()
     TTreeReaderArray<float> EcalEndcapPHitsY(tree_reader, "EcalEndcapPRecHits.position.y");
     TTreeReaderArray<float> EcalEndcapPHitsZ(tree_reader, "EcalEndcapPRecHits.position.z");
 
-    TTreeReaderArray<unsigned int> simuAssocEcalEndcapN(tree_reader, "EcalEndcapNClusterAssociations.simID");
-    TTreeReaderArray<unsigned int> recoAssocEcalEndcapN(tree_reader, "EcalEndcapNClusterAssociations.recID");
+    TTreeReaderArray<int> simuAssocEcalEndcapN(tree_reader, "_EcalEndcapNClusterAssociations_sim.index");
+    TTreeReaderArray<int> recoAssocEcalEndcapN(tree_reader, "_EcalEndcapNClusterAssociations_rec.index");
     TTreeReaderArray<float> EcalEndcapNEng(tree_reader, "EcalEndcapNClusters.energy");
 
     TTreeReaderArray<float> EcalEndcapNHitsEng(tree_reader, "EcalEndcapNRecHits.energy");
@@ -144,8 +143,8 @@ void calPlots()
     TTreeReaderArray<float> EcalEndcapNHitsZ(tree_reader, "EcalEndcapNRecHits.position.z");
 
     // Hcal Information
-    TTreeReaderArray<unsigned int> simuAssocHcalBarrel(tree_reader, "HcalBarrelClusterAssociations.simID");
-    TTreeReaderArray<unsigned int> recoAssocHcalBarrel(tree_reader, "HcalBarrelClusterAssociations.recID");
+    TTreeReaderArray<int> simuAssocHcalBarrel(tree_reader, "_HcalBarrelClusterAssociations_sim.index");
+    TTreeReaderArray<int> recoAssocHcalBarrel(tree_reader, "_HcalBarrelClusterAssociations_rec.index");
     TTreeReaderArray<float> HcalBarrelEng(tree_reader, "HcalBarrelClusters.energy");
 
     TTreeReaderArray<float> HcalBarrelHitsEng(tree_reader, "HcalBarrelRecHits.energy");
@@ -153,8 +152,8 @@ void calPlots()
     TTreeReaderArray<float> HcalBarrelHitsY(tree_reader, "HcalBarrelRecHits.position.y");
     TTreeReaderArray<float> HcalBarrelHitsZ(tree_reader, "HcalBarrelRecHits.position.z");
 
-    TTreeReaderArray<unsigned int> simuAssocHcalEndcapP(tree_reader, "HcalEndcapPInsertClusterAssociations.simID");
-    TTreeReaderArray<unsigned int> recoAssocHcalEndcapP(tree_reader, "HcalEndcapPInsertClusterAssociations.recID");    
+    TTreeReaderArray<int> simuAssocHcalEndcapP(tree_reader, "_HcalEndcapPInsertClusterAssociations_sim.index");
+    TTreeReaderArray<int> recoAssocHcalEndcapP(tree_reader, "_HcalEndcapPInsertClusterAssociations_rec.index");    
     TTreeReaderArray<float> HcalEndcapPEng(tree_reader, "HcalEndcapPInsertClusters.energy");
 
     TTreeReaderArray<float> HcalEndcapPHitsEng(tree_reader, "HcalEndcapPInsertRecHits.energy");
@@ -162,8 +161,8 @@ void calPlots()
     TTreeReaderArray<float> HcalEndcapPHitsY(tree_reader, "HcalEndcapPInsertRecHits.position.y");
     TTreeReaderArray<float> HcalEndcapPHitsZ(tree_reader, "HcalEndcapPInsertRecHits.position.z");
 
-    TTreeReaderArray<unsigned int> simuAssocLFHcal(tree_reader, "LFHCALClusterAssociations.simID");
-    TTreeReaderArray<unsigned int> recoAssocLFHcal(tree_reader, "LFHCALClusterAssociations.recID");    
+    TTreeReaderArray<int> simuAssocLFHcal(tree_reader, "_LFHCALClusterAssociations_sim.index");
+    TTreeReaderArray<int> recoAssocLFHcal(tree_reader, "_LFHCALClusterAssociations_rec.index");    
     TTreeReaderArray<float> LFHcalEng(tree_reader, "LFHCALClusters.energy");
 
     TTreeReaderArray<float> HcalLFHitsEng(tree_reader, "LFHCALRecHits.energy");
@@ -171,8 +170,8 @@ void calPlots()
     TTreeReaderArray<float> HcalLFHitsY(tree_reader, "LFHCALRecHits.position.y");
     TTreeReaderArray<float> HcalLFHitsZ(tree_reader, "LFHCALRecHits.position.z");
 
-    TTreeReaderArray<unsigned int> simuAssocHcalEndcapN(tree_reader, "HcalEndcapNClusterAssociations.simID");
-    TTreeReaderArray<unsigned int> recoAssocHcalEndcapN(tree_reader, "HcalEndcapNClusterAssociations.recID");
+    TTreeReaderArray<int> simuAssocHcalEndcapN(tree_reader, "_HcalEndcapNClusterAssociations_sim.index");
+    TTreeReaderArray<int> recoAssocHcalEndcapN(tree_reader, "_HcalEndcapNClusterAssociations_rec.index");
     TTreeReaderArray<float> HcalEndcapNEng(tree_reader, "HcalEndcapNClusters.energy");
 
     TTreeReaderArray<float> HcalEndcapNHitsEng(tree_reader, "HcalEndcapNRecHits.energy");
@@ -218,21 +217,21 @@ void calPlots()
     TH2D *h_HcalLFHitsRadiusVsE = new TH2D("h_HcalLFHitsRadiusVsE","Hcal LF Hits Radius vs Energy; Radius (mm); Energy (GeV)",125,0.,5000.,100,0.,10.);
 
 
-    TH1D *h_EcalBarrelImagingHitsSize = new TH1D("h_EcalBarrelImagingHitsSize","Ecal Barrel Imaging Hits Size; Size",125,0.,50.);
-    TH1D *h_EcalBarrelScFiHitsSize = new TH1D("h_EcalBarrelScFiHitsSize","Ecal Barrel ScFi Hits Size; Size",125,0.,50.);
+    TH1D *h_EcalBarrelImagingHitsSize = new TH1D("h_EcalBarrelImagingHitsSize","Ecal Barrel Imaging Hits Size; Size",125,0.,75.);
+    TH1D *h_EcalBarrelScFiHitsSize = new TH1D("h_EcalBarrelScFiHitsSize","Ecal Barrel ScFi Hits Size; Size",125,0.,75.);
     TH1D *h_EcalEndcapPHitsSize = new TH1D("h_EcalEndcapPHitsSize","Ecal Endcap P Hits Size; Size",125,0.,50.);
     TH1D *h_EcalEndcapNHitsSize = new TH1D("h_EcalEndcapNHitsSize","Ecal Endcap N Hits Size; Size",125,0.,50.);
-    TH2D *h_EcalBarrelImagingHitsSizeVsE = new TH2D("h_EcalBarrelImagingHitsSizeVsE","Ecal Barrel Imaging Hits Size vs Energy; Size; Energy (GeV)",125,0.,50.,100,0.,10.);
-    TH2D *h_EcalBarrelScFiHitsSizeVsE = new TH2D("h_EcalBarrelScFiHitsSizeVsE","Ecal Barrel ScFi Hits Size vs Energy; Size; Energy (GeV)",125,0.,50.,100,0.,10.);
+    TH2D *h_EcalBarrelImagingHitsSizeVsE = new TH2D("h_EcalBarrelImagingHitsSizeVsE","Ecal Barrel Imaging Hits Size vs Energy; Size; Energy (GeV)",125,0.,75.,100,0.,10.);
+    TH2D *h_EcalBarrelScFiHitsSizeVsE = new TH2D("h_EcalBarrelScFiHitsSizeVsE","Ecal Barrel ScFi Hits Size vs Energy; Size; Energy (GeV)",125,0.,75.,100,0.,10.);
     TH2D *h_EcalEndcapPHitsSizeVsE = new TH2D("h_EcalEndcapPHitsSizeVsE","Ecal Endcap P Hits Size vs Energy; Size; Energy (GeV)",125,0.,50.,100,0.,10.);
     TH2D *h_EcalEndcapNHitsSizeVsE = new TH2D("h_EcalEndcapNHitsSizeVsE","Ecal Endcap N Hits Size vs Energy; Size; Energy (GeV)",125,0.,50.,100,0.,10.);
 
     TH1D *h_HcalBarrelHitsSize = new TH1D("h_HcalBarrelHitsSize","Hcal Barrel Hits Size; Size",125,0.,50.);
-    TH1D *h_HcalEndcapPHitsSize = new TH1D("h_HcalEndcapPHitsSize","Hcal Endcap P Hits Size; Size",125,0.,50.);
+    TH1D *h_HcalEndcapPHitsSize = new TH1D("h_HcalEndcapPHitsSize","Hcal Endcap P Hits Size; Size",125,0.,75.);
     TH1D *h_HcalEndcapNHitsSize = new TH1D("h_HcalEndcapNHitsSize","Hcal Endcap N Hits Size; Size",125,0.,50.);
     TH1D *h_HcalLFHitsSize = new TH1D("h_HcalLFHitsSize","LFHcal Hits Size; Size",125,0.,50.);
     TH2D *h_HcalBarrelHitsSizeVsE = new TH2D("h_HcalBarrelHitsSizeVsE","Hcal Barrel Hits Size vs Energy; Size; Energy (GeV)",125,0.,50.,100,0.,10.);
-    TH2D *h_HcalEndcapPHitsSizeVsE = new TH2D("h_HcalEndcapPHitsSizeVsE","Hcal Endcap P Hits Size vs Energy; Size; Energy (GeV)",125,0.,50.,100,0.,10.);
+    TH2D *h_HcalEndcapPHitsSizeVsE = new TH2D("h_HcalEndcapPHitsSizeVsE","Hcal Endcap P Hits Size vs Energy; Size; Energy (GeV)",125,0.,75.,100,0.,10.);
     TH2D *h_HcalEndcapNHitsSizeVsE = new TH2D("h_HcalEndcapNHitsSizeVsE","Hcal Endcap N Hits Size vs Energy; Size; Energy (GeV)",125,0.,50.,100,0.,10.);
     TH2D *h_HcalLFHitsSizeVsE = new TH2D("h_HcalLFHitsSizeVsE","Hcal LF Hits Size vs Energy; Size; Energy (GeV)",125,0.,50.,100,0.,10.);
 

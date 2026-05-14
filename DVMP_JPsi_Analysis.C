@@ -54,7 +54,7 @@ void DVMP_JPsi_Analysis()
     gROOT->ProcessLine("SetePICStyle()");
     //gStyle->SetOptStat(0);
 
-    TString infile="eicReconOutput/SimCampaign_JPsiMuMu_10ifb_10x130ep_Pruned.root";
+    TString infile="eicReconOutput/SimCampaign_26020_JPsiMuMu_10ifb_10x130ep_Pruned.root";
     //TString infile="dis_background/DIS_Q2_1_10_10x130ep_Pruned.root";
     
     std::string filename = infile.Data();
@@ -127,12 +127,12 @@ void DVMP_JPsi_Analysis()
     TTreeReaderArray<float> ttrackEng(tree_reader, "ReconstructedTruthSeededChargedParticles.energy");
 
     // Get Associations Between MCParticles and ReconstructedChargedParticles
-    TTreeReaderArray<unsigned int> recoAssoc(tree_reader, "ReconstructedChargedParticleAssociations.recID");
-    TTreeReaderArray<unsigned int> simuAssoc(tree_reader, "ReconstructedChargedParticleAssociations.simID");
+    TTreeReaderArray<int> recoAssoc(tree_reader, "_ReconstructedChargedParticleAssociations_rec.index");
+    TTreeReaderArray<int> simuAssoc(tree_reader, "_ReconstructedChargedParticleAssociations_sim.index");
 
     // Get B0 Information
-    TTreeReaderArray<unsigned int> recoAssocB0(tree_reader, "B0ECalClusterAssociations.recID");
-    TTreeReaderArray<unsigned int> simuAssocB0(tree_reader, "B0ECalClusterAssociations.simID");
+    TTreeReaderArray<int> recoAssocB0(tree_reader, "_B0ECalClusterAssociations_rec.index");
+    TTreeReaderArray<int> simuAssocB0(tree_reader, "_B0ECalClusterAssociations_sim.index");
     TTreeReaderArray<float> B0Eng(tree_reader, "B0ECalClusters.energy");
     TTreeReaderArray<float> B0z(tree_reader, "B0ECalClusters.position.z");
 
@@ -145,33 +145,41 @@ void DVMP_JPsi_Analysis()
     TTreeReaderArray<float> OffMEng(tree_reader, "ForwardOffMRecParticles.energy");
 
     // Ecal Information
-    TTreeReaderArray<unsigned int> simuAssocEcalBarrel(tree_reader, "EcalBarrelClusterAssociations.simID");
-    TTreeReaderArray<unsigned int> recoAssocEcalBarrel(tree_reader, "EcalBarrelClusterAssociations.recID");
+    TTreeReaderArray<int> simuAssocEcalBarrel(tree_reader, "_EcalBarrelClusterAssociations_sim.index");
+    TTreeReaderArray<int> recoAssocEcalBarrel(tree_reader, "_EcalBarrelClusterAssociations_rec.index");
     TTreeReaderArray<float> EcalBarrelEng(tree_reader, "EcalBarrelClusters.energy");
+    
+    TTreeReaderArray<int> simuAssocEcalBarrelImg(tree_reader, "_EcalBarrelImagingClusterAssociations_sim.index");
+    TTreeReaderArray<int> recoAssocEcalBarrelImg(tree_reader, "_EcalBarrelImagingClusterAssociations_rec.index");
+    TTreeReaderArray<float> EcalBarrelImgEng(tree_reader, "EcalBarrelImagingClusters.energy");
 
-    TTreeReaderArray<unsigned int> simuAssocEcalEndcapP(tree_reader, "EcalEndcapPClusterAssociations.simID");
-    TTreeReaderArray<unsigned int> recoAssocEcalEndcapP(tree_reader, "EcalEndcapPClusterAssociations.recID");    
+    TTreeReaderArray<int> simuAssocEcalBarrelScFi(tree_reader, "_EcalBarrelScFiClusterAssociations_sim.index");
+    TTreeReaderArray<int> recoAssocEcalBarrelScFi(tree_reader, "_EcalBarrelScFiClusterAssociations_rec.index");
+    TTreeReaderArray<float> EcalBarrelScFiEng(tree_reader, "EcalBarrelScFiClusters.energy");
+
+    TTreeReaderArray<int> simuAssocEcalEndcapP(tree_reader, "_EcalEndcapPClusterAssociations_sim.index");
+    TTreeReaderArray<int> recoAssocEcalEndcapP(tree_reader, "_EcalEndcapPClusterAssociations_rec.index");     
     TTreeReaderArray<float> EcalEndcapPEng(tree_reader, "EcalEndcapPClusters.energy");
 
-    TTreeReaderArray<unsigned int> simuAssocEcalEndcapN(tree_reader, "EcalEndcapNClusterAssociations.simID");
-    TTreeReaderArray<unsigned int> recoAssocEcalEndcapN(tree_reader, "EcalEndcapNClusterAssociations.recID");
+    TTreeReaderArray<int> simuAssocEcalEndcapN(tree_reader, "_EcalEndcapNClusterAssociations_sim.index");
+    TTreeReaderArray<int> recoAssocEcalEndcapN(tree_reader, "_EcalEndcapNClusterAssociations_rec.index");
     TTreeReaderArray<float> EcalEndcapNEng(tree_reader, "EcalEndcapNClusters.energy");
 
     // Hcal Information
-    TTreeReaderArray<unsigned int> simuAssocHcalBarrel(tree_reader, "HcalBarrelClusterAssociations.simID");
-    TTreeReaderArray<unsigned int> recoAssocHcalBarrel(tree_reader, "HcalBarrelClusterAssociations.recID");
+    TTreeReaderArray<int> simuAssocHcalBarrel(tree_reader, "_HcalBarrelClusterAssociations_sim.index");
+    TTreeReaderArray<int> recoAssocHcalBarrel(tree_reader, "_HcalBarrelClusterAssociations_rec.index");
     TTreeReaderArray<float> HcalBarrelEng(tree_reader, "HcalBarrelClusters.energy");
 
-    TTreeReaderArray<unsigned int> simuAssocHcalEndcapP(tree_reader, "HcalEndcapPInsertClusterAssociations.simID");
-    TTreeReaderArray<unsigned int> recoAssocHcalEndcapP(tree_reader, "HcalEndcapPInsertClusterAssociations.recID");    
+    TTreeReaderArray<int> simuAssocHcalEndcapP(tree_reader, "_HcalEndcapPInsertClusterAssociations_sim.index");
+    TTreeReaderArray<int> recoAssocHcalEndcapP(tree_reader, "_HcalEndcapPInsertClusterAssociations_rec.index");
     TTreeReaderArray<float> HcalEndcapPEng(tree_reader, "HcalEndcapPInsertClusters.energy");
 
-    TTreeReaderArray<unsigned int> simuAssocLFHcal(tree_reader, "LFHCALClusterAssociations.simID");
-    TTreeReaderArray<unsigned int> recoAssocLFHcal(tree_reader, "LFHCALClusterAssociations.recID");    
+    TTreeReaderArray<int> simuAssocLFHcal(tree_reader, "_LFHCALClusterAssociations_sim.index");
+    TTreeReaderArray<int> recoAssocLFHcal(tree_reader, "_LFHCALClusterAssociations_rec.index");
     TTreeReaderArray<float> LFHcalEng(tree_reader, "LFHCALClusters.energy");
 
-    TTreeReaderArray<unsigned int> simuAssocHcalEndcapN(tree_reader, "HcalEndcapNClusterAssociations.simID");
-    TTreeReaderArray<unsigned int> recoAssocHcalEndcapN(tree_reader, "HcalEndcapNClusterAssociations.recID");
+    TTreeReaderArray<int> simuAssocHcalEndcapN(tree_reader, "_HcalEndcapNClusterAssociations_sim.index");
+    TTreeReaderArray<int> recoAssocHcalEndcapN(tree_reader, "_HcalEndcapNClusterAssociations_rec.index");
     TTreeReaderArray<float> HcalEndcapNEng(tree_reader, "HcalEndcapNClusters.energy");
 
     // Define Eta Histograms
@@ -467,6 +475,34 @@ void DVMP_JPsi_Analysis()
             JPsiMomHist->Fill(JPsiMomT.Mag());
             JPsiEtaMom->Fill(JPsiMomT.PseudoRapidity(),JPsiMomT.Mag());
         }
+
+        // Deal with truth variables
+
+        Q2_truth = -(beamE4Mom - scatE4MomT).mag2();
+        t_truth = -1*((scatp4MomT - beamp4Mom).mag2());
+        y_truth =(beamp4Mom.Dot(beamE4Mom - scatE4MomT))/(beamp4Mom.Dot(beamE4Mom));
+        x_truth = Q2_truth/(4*beamE4Mom.E()*beamp4Mom.E()*y_truth);
+
+        trueQ2->Fill(Q2_truth);
+        truet->Fill(t_truth);
+        truey->Fill(y_truth);
+        truex->Fill(x_truth);
+
+        if (1 <= Q2_truth && Q2_truth <= 50) // Check if Q2 is in the range of interest
+        {
+          if (0.0016 <= x_truth && x_truth < 0.0025) // Check if xbjk is in the range of interest
+          {
+            truet_XbjkA->Fill(t_truth);
+          }
+          else if (0.016 <= x_truth && x_truth < 0.025)
+          {
+            truet_XbjkB->Fill(t_truth);
+          }
+          else if (0.16 <= x_truth && x_truth < 0.25)
+          {
+            truet_XbjkC->Fill(t_truth);
+          }
+        }
         
 
         // Search for the proton in the forward detectors
@@ -482,22 +518,52 @@ void DVMP_JPsi_Analysis()
             for (unsigned int i = 0; i < OffMEng.GetSize(); i++)
             {
                 if (OffMEng[i] < protonEnergy*0.5) continue; // Only look at protons with at least 50% of the beam energy
-                scatpMomR = scatpMomT;
-                scatp4MomR = scatp4MomT;
+                for (unsigned int i = 0; i < ttrackEng.GetSize(); i++)
+                {
+                    recoTrackMom[i] = TVector3(ttrackMomX[i],ttrackMomY[i],ttrackMomZ[i]);
+                    recoTrack4Mom[i].SetPxPyPzE(ttrackMomX[i],ttrackMomY[i],ttrackMomZ[i], TMath::Sqrt(ttrackMomX[i]*ttrackMomX[i] + ttrackMomY[i]*ttrackMomY[i] + ttrackMomZ[i]*ttrackMomZ[i] + muMass*muMass));
+                    
+                    if (TMath::Abs(recoTrackMom[i].Mag() - beampMom.Mag()) < 15) // If truth seeded track momentum matches beam proton momentum, identify as proton
+                    {
+                        scatpMomR = recoTrackMom[i];
+                        scatp4MomR = recoTrack4Mom[i];
+                        break;
+                    }
+                
+                }
                 break;
             }
             if (scatpMomR.Mag() == 0.)
             {
                 for (unsigned int i = 0; i < B0Eng.GetSize(); i++)
-                {
-                    if (B0Eng[i] > 2) // Only look at tracks with at least 2 GeV energy
+                {   
+                    if (B0Eng[i] < 2) continue; // Only look for large deposits in the B0
+                    for (unsigned int i = 0; i < ttrackEng.GetSize(); i++)
                     {
-                        scatpMomR = scatpMomT;
-                        scatp4MomR = scatp4MomT;
+                        recoTrackMom[i] = TVector3(ttrackMomX[i],ttrackMomY[i],ttrackMomZ[i]);
+                        recoTrack4Mom[i].SetPxPyPzE(ttrackMomX[i],ttrackMomY[i],ttrackMomZ[i], TMath::Sqrt(ttrackMomX[i]*ttrackMomX[i] + ttrackMomY[i]*ttrackMomY[i] + ttrackMomZ[i]*ttrackMomZ[i] + muMass*muMass));
+                        
+                        if (TMath::Abs(recoTrackMom[i].Mag() - beampMom.Mag()) < 15) // If truth seeded track momentum matches beam proton momentum, identify as proton
+                        {
+                            scatpMomR = recoTrackMom[i];
+                            scatp4MomR = recoTrack4Mom[i];
+                            break;
+                        }
+                    
                     }
+                    break;
                 }
             }
         } 
+
+        // Reset vectors
+        for (int i=0; i<3; i++)
+        {
+            recoTrackMom[i] = TVector3(0.,0.,0.);
+            recoTrack4Mom[i].SetPxPyPzE(0.,0.,0.,0.);
+            recoTrackIndex[i] = -1;
+            recoTrackTruePID[i] = -1;
+        }
 
         if (scatpMomR.Mag() == 0.) // If no proton found, skip event
         { 
@@ -510,21 +576,7 @@ void DVMP_JPsi_Analysis()
         {
             recoTrackMom[i] = TVector3(trackMomX[i],trackMomY[i],trackMomZ[i]);
             recoTrack4Mom[i].SetPxPyPzE(trackMomX[i],trackMomY[i],trackMomZ[i], TMath::Sqrt(trackMomX[i]*trackMomX[i] + trackMomY[i]*trackMomY[i] + trackMomZ[i]*trackMomZ[i] + muMass*muMass));
-        
-            /*
-            if (TMath::Abs(recoTrackMom[i].Mag() - scatEMomT.Mag()) < 0.5)
-            {
-                recoTrackTruePID[i] = 11;     
-            }
-            else if (TMath::Abs(recoTrackMom[i].Mag() - muPlusMomT.Mag())< 0.5 || TMath::Abs(recoTrackMom[i].Mag() - muMinusMomT.Mag()) < 0.5)
-            {
-                recoTrackTruePID[i] = 13;     
-            }
-            else
-            {
-                recoTrackTruePID[i] = -1;
-            }
-            */
+
 
             if(partGenStat[simuAssoc[i]] == 1) // Select stable thrown particles
             {
@@ -756,11 +808,6 @@ void DVMP_JPsi_Analysis()
 
         // Calculate kinematic variable
 
-        Q2_truth = -(beamE4Mom - scatE4MomT).mag2();
-        t_truth = -1*((scatp4MomT - beamp4Mom).mag2());
-        y_truth =(beamp4Mom.Dot(beamE4Mom - scatE4MomT))/(beamp4Mom.Dot(beamE4Mom));
-        x_truth = Q2_truth/(4*beamE4Mom.E()*beamp4Mom.E()*y_truth);
-
         double delta_h = (JPsi4MomR.E() + scatp4MomR.E()) - (JPsi4MomR.Pz() + scatp4MomR.Pz());
         double pt2_h = (pow((JPsi4MomR.Px()+scatp4MomR.Px()),2))+(pow((JPsi4MomR.Py()+scatp4MomR.Py()),2));
         double alpha_e = tan((scatE4MomR.Theta()/2));
@@ -796,8 +843,6 @@ void DVMP_JPsi_Analysis()
         t_eXBABE = -1*((beamp4Mom - scatp4MomR_corr).mag2());
 
         // Fill kinematic histograms
-
-        trueQ2->Fill(Q2_truth);
         reconQ2_e->Fill(Q2_e);
         reconQ2_JB->Fill(Q2_JB);
         reconQ2_DA->Fill(Q2_DA);
@@ -809,7 +854,6 @@ void DVMP_JPsi_Analysis()
 
         reconQ2_DA_vs_trueQ2->Fill(Q2_truth, Q2_DA);
 
-        truet->Fill(t_truth);
         recont_eXBABE->Fill(t_eXBABE);
         recont_eXPT->Fill(t_eXPT);
         recont_eX->Fill(t_eX);
@@ -822,7 +866,6 @@ void DVMP_JPsi_Analysis()
         recont_eXBABE_vs_truet->Fill(t_truth, t_eXBABE);
         deltat_eXBABE_vs_truet->Fill(t_truth, 100*(t_eXBABE - t_truth)/t_truth);
 
-        truey->Fill(y_truth);
         recony_e->Fill(y_e);
         recony_JB->Fill(y_JB);
         recony_DA->Fill(y_DA);
@@ -834,7 +877,6 @@ void DVMP_JPsi_Analysis()
 
         recony_DA_vs_truey->Fill(y_truth, y_DA);
 
-        truex->Fill(x_truth);
         reconx_e->Fill(x_e);
         reconx_JB->Fill(x_JB);
         reconx_DA->Fill(x_DA);
@@ -843,23 +885,6 @@ void DVMP_JPsi_Analysis()
         deltax_JB->Fill(100*(x_JB - x_truth)/x_truth);
         deltax_DA->Fill(100*(x_DA - x_truth)/x_truth);
         deltax_sigma->Fill(100*(x_sigma - x_truth)/x_truth);
-
-
-        if (1 <= Q2_truth && Q2_truth <= 50) // Check if Q2 is in the range of interest
-        {
-          if (0.0016 <= x_truth && x_truth < 0.0025) // Check if xbjk is in the range of interest
-          {
-            truet_XbjkA->Fill(t_truth);
-          }
-          else if (0.016 <= x_truth && x_truth < 0.025)
-          {
-            truet_XbjkB->Fill(t_truth);
-          }
-          else if (0.16 <= x_truth && x_truth < 0.25)
-          {
-            truet_XbjkC->Fill(t_truth);
-          }
-        }
 
         if (1 <= Q2_DA && Q2_DA <= 50) // Check if Q2 is in the range of interest
         {

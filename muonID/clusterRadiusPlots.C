@@ -72,6 +72,15 @@ void clusterRadiusPlots()
     TH1D *h_HcalEndcapNHitsRadius[2];
     TH1D *h_HcalLFHitsRadius[2];
 
+    TH1D *h_EcalBarrelImagingHitsSize[2];
+    TH1D *h_EcalBarrelScFiHitsSize[2];
+    TH1D *h_EcalEndcapPHitsSize[2];
+    TH1D *h_EcalEndcapNHitsSize[2];
+    TH1D *h_HcalBarrelHitsSize[2];
+    TH1D *h_HcalEndcapPHitsSize[2]; 
+    TH1D *h_HcalEndcapNHitsSize[2];
+    TH1D *h_HcalLFHitsSize[2];
+
     TLegend* legend = new TLegend(0.55, 0.7, 0.8, 0.9);
     legend->SetHeader("Particle", "C");
 
@@ -90,6 +99,16 @@ void clusterRadiusPlots()
         h_HcalEndcapPHitsRadius[fileNumber] = (TH1D*)infile->Get("radiusPlots/h_HcalEndcapPHitsRadius");
         h_HcalEndcapNHitsRadius[fileNumber] = (TH1D*)infile->Get("radiusPlots/h_HcalEndcapNHitsRadius");
         h_HcalLFHitsRadius[fileNumber] = (TH1D*)infile->Get("radiusPlots/h_HcalLFHitsRadius");
+
+        h_EcalBarrelImagingHitsSize[fileNumber] = (TH1D*)infile->Get("sizePlots/h_EcalBarrelImagingHitsSize");
+        h_EcalBarrelScFiHitsSize[fileNumber] = (TH1D*)infile->Get("sizePlots/h_EcalBarrelScFiHitsSize");
+        h_EcalEndcapPHitsSize[fileNumber] = (TH1D*)infile->Get("sizePlots/h_EcalEndcapPHitsSize");
+        h_EcalEndcapNHitsSize[fileNumber] = (TH1D*)infile->Get("sizePlots/h_EcalEndcapNHitsSize");
+        h_HcalBarrelHitsSize[fileNumber] = (TH1D*)infile->Get("sizePlots/h_HcalBarrelHitsSize");
+        h_HcalEndcapPHitsSize[fileNumber] = (TH1D*)infile->Get("sizePlots/h_HcalEndcapPHitsSize");
+        h_HcalEndcapNHitsSize[fileNumber] = (TH1D*)infile->Get("sizePlots/h_HcalEndcapNHitsSize");
+        h_HcalLFHitsSize[fileNumber] = (TH1D*)infile->Get("sizePlots/h_HcalLFHitsSize"); 
+
         legend->AddEntry(h_EcalBarrelImagingHitsRadius[fileNumber], ParticleTypeList[fileNumber].c_str(), "p");
 
     }
@@ -198,4 +217,110 @@ void clusterRadiusPlots()
     legend->Draw();
     c_HcalLFHitsRadius->SetLogy();
     c_HcalLFHitsRadius->Draw();
+
+
+    TCanvas *c_EcalBarrelImagingHitsSize = new TCanvas("c_EcalBarrelImagingHitsSize", "Ecal Barrel Imaging Hits Size", 800, 600);
+    h_EcalBarrelImagingHitsSize[0]->SetLineColor(sixColourScheme[2]);
+    h_EcalBarrelImagingHitsSize[0]->SetMarkerColor(sixColourScheme[2]);
+    h_EcalBarrelImagingHitsSize[0]->SetMarkerStyle(20);
+    h_EcalBarrelImagingHitsSize[0]->Draw("HIST PE");
+    h_EcalBarrelImagingHitsSize[1]->SetLineColor(sixColourScheme[4]);
+    h_EcalBarrelImagingHitsSize[1]->SetMarkerColor(sixColourScheme[4]);
+    h_EcalBarrelImagingHitsSize[1]->SetMarkerStyle(22);
+    h_EcalBarrelImagingHitsSize[1]->Draw("HIST PE SAME");
+    legend->Draw();
+    c_EcalBarrelImagingHitsSize->SetLogy();
+    c_EcalBarrelImagingHitsSize->Draw();        
+
+    TCanvas *c_EcalBarrelScFiHitsSize = new TCanvas("c_EcalBarrelScFiHitsSize", "Ecal Barrel ScFi Hits Size", 800, 600);
+    h_EcalBarrelScFiHitsSize[0]->SetLineColor(sixColourScheme[2]);
+    h_EcalBarrelScFiHitsSize[0]->SetMarkerColor(sixColourScheme[2]);
+    h_EcalBarrelScFiHitsSize[0]->SetMarkerStyle(20);
+    h_EcalBarrelScFiHitsSize[0]->Draw("HIST PE");
+    h_EcalBarrelScFiHitsSize[1]->SetLineColor(sixColourScheme[4]);
+    h_EcalBarrelScFiHitsSize[1]->SetMarkerColor(sixColourScheme[4]);
+    h_EcalBarrelScFiHitsSize[1]->SetMarkerStyle(22);
+    h_EcalBarrelScFiHitsSize[1]->Draw("HIST PE SAME");
+    legend->Draw();
+    c_EcalBarrelScFiHitsSize->SetLogy();
+    c_EcalBarrelScFiHitsSize->Draw();        
+
+    TCanvas *c_EcalEndcapPHitsSize = new TCanvas("c_EcalEndcapPHitsSize", "Ecal Endcap P Hits Size", 800, 600);
+    h_EcalEndcapPHitsSize[0]->SetLineColor(sixColourScheme[2]);
+    h_EcalEndcapPHitsSize[0]->SetMarkerColor(sixColourScheme[2]);
+    h_EcalEndcapPHitsSize[0]->SetMarkerStyle(20);
+    h_EcalEndcapPHitsSize[0]->Draw("HIST PE");
+    h_EcalEndcapPHitsSize[1]->SetLineColor(sixColourScheme[4]);
+    h_EcalEndcapPHitsSize[1]->SetMarkerColor(sixColourScheme[4]);
+    h_EcalEndcapPHitsSize[1]->SetMarkerStyle(22);
+    h_EcalEndcapPHitsSize[1]->Draw("HIST PE SAME");
+    legend->Draw();
+    c_EcalEndcapPHitsSize->SetLogy();
+    c_EcalEndcapPHitsSize->Draw();
+
+    TCanvas *c_EcalEndcapNHitsSize = new TCanvas("c_EcalEndcapNHitsSize", "Ecal Endcap N Hits Size", 800, 600);
+    h_EcalEndcapNHitsSize[0]->SetLineColor(sixColourScheme[2]);
+    h_EcalEndcapNHitsSize[0]->SetMarkerColor(sixColourScheme[2]);
+    h_EcalEndcapNHitsSize[0]->SetMarkerStyle(20);
+    h_EcalEndcapNHitsSize[0]->Draw("HIST PE ");
+    h_EcalEndcapNHitsSize[1]->SetLineColor(sixColourScheme[4]);
+    h_EcalEndcapNHitsSize[1]->SetMarkerColor(sixColourScheme[4]);
+    h_EcalEndcapNHitsSize[1]->SetMarkerStyle(22);
+    h_EcalEndcapNHitsSize[1]->Draw("HIST PE SAME");
+    legend->Draw();
+    c_EcalEndcapNHitsSize->SetLogy();
+    c_EcalEndcapNHitsSize->Draw();
+
+    TCanvas *c_HcalBarrelHitsSize = new TCanvas("c_HcalBarrelHitsSize", "Hcal Barrel Hits Size", 800, 600);
+    h_HcalBarrelHitsSize[0]->SetLineColor(sixColourScheme[2]);
+    h_HcalBarrelHitsSize[0]->SetMarkerColor(sixColourScheme[2]);
+    h_HcalBarrelHitsSize[0]->SetMarkerStyle(20);
+    h_HcalBarrelHitsSize[0]->Draw("HIST PE");       
+    h_HcalBarrelHitsSize[1]->SetLineColor(sixColourScheme[4]);
+    h_HcalBarrelHitsSize[1]->SetMarkerColor(sixColourScheme[4]);
+    h_HcalBarrelHitsSize[1]->SetMarkerStyle(22);
+    h_HcalBarrelHitsSize[1]->Draw("HIST PE SAME");
+    legend->Draw();
+    c_HcalBarrelHitsSize->SetLogy();
+    c_HcalBarrelHitsSize->Draw();
+
+    TCanvas *c_HcalEndcapPHitsSize = new TCanvas("c_HcalEndcapPHitsSize", "Hcal Endcap P Hits Size", 800, 600);
+    h_HcalEndcapPHitsSize[0]->SetLineColor(sixColourScheme[2]);
+    h_HcalEndcapPHitsSize[0]->SetMarkerColor(sixColourScheme[2]);
+    h_HcalEndcapPHitsSize[0]->SetMarkerStyle(20);
+    h_HcalEndcapPHitsSize[0]->Draw("HIST PE");
+    h_HcalEndcapPHitsSize[1]->SetLineColor(sixColourScheme[4]);
+    h_HcalEndcapPHitsSize[1]->SetMarkerColor(sixColourScheme[4]);
+    h_HcalEndcapPHitsSize[1]->SetMarkerStyle(22);
+    h_HcalEndcapPHitsSize[1]->Draw("HIST PE SAME");
+    legend->Draw();
+    c_HcalEndcapPHitsSize->SetLogy();
+    c_HcalEndcapPHitsSize->Draw();  
+
+    TCanvas *c_HcalEndcapNHitsSize = new TCanvas("c_HcalEndcapNHitsSize", "Hcal Endcap N Hits Size", 800, 600);
+    h_HcalEndcapNHitsSize[0]->SetLineColor(sixColourScheme[2]);
+    h_HcalEndcapNHitsSize[0]->SetMarkerColor(sixColourScheme[2]);
+    h_HcalEndcapNHitsSize[0]->SetMarkerStyle(20);
+    h_HcalEndcapNHitsSize[0]->Draw("HIST PE");
+    h_HcalEndcapNHitsSize[1]->SetLineColor(sixColourScheme[4]);
+    h_HcalEndcapNHitsSize[1]->SetMarkerColor(sixColourScheme[4]);
+    h_HcalEndcapNHitsSize[1]->SetMarkerStyle(22);
+    h_HcalEndcapNHitsSize[1]->Draw("HIST PE SAME");
+    legend->Draw();
+    c_HcalEndcapNHitsSize->SetLogy();
+    c_HcalEndcapNHitsSize->Draw();
+
+    TCanvas *c_HcalLFHitsSize = new TCanvas("c_HcalLFHitsSize", "Hcal LF Hits Size", 800, 600);
+    h_HcalLFHitsSize[0]->SetLineColor(sixColourScheme[2]);
+    h_HcalLFHitsSize[0]->SetMarkerColor(sixColourScheme[2]);
+    h_HcalLFHitsSize[0]->SetMarkerStyle(20);
+    h_HcalLFHitsSize[0]->Draw("HIST PE");
+    h_HcalLFHitsSize[1]->SetLineColor(sixColourScheme[4]);
+    h_HcalLFHitsSize[1]->SetMarkerColor(sixColourScheme[4]);
+    h_HcalLFHitsSize[1]->SetMarkerStyle(22);
+    h_HcalLFHitsSize[1]->Draw("HIST PE SAME");
+    legend->Draw();
+    c_HcalLFHitsSize->SetLogy();
+    c_HcalLFHitsSize->Draw();
+
 }
