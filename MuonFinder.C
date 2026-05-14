@@ -13,43 +13,67 @@
 
 #include "DVMP_JPsi_Analysis.h"
 
+struct EpLookupTree {
+    TTree* tree = nullptr;
+    std::vector<double> *Ep_ptr = nullptr;
+    std::vector<double> *prob_ptr = nullptr;
+    double p;
+};
 
-bool IsMuon(TVector3 trackMom, int simuID,
-            TTreeReaderArray<float>& EcalBarrelEng, TTreeReaderArray<float>& EcalEndcapPEng, TTreeReaderArray<float>& EcalEndcapNEng, 
+struct SizeLookupTree {
+    TTree* tree = nullptr;
+    std::vector<double> *size_ptr = nullptr;
+    std::vector<double> *prob_ptr = nullptr;
+    double p;
+};
+
+double IsMuon(TVector3 trackMom, int simuID, EpLookupTree epTrees[8], SizeLookupTree sizeTrees[8],
+            TTreeReaderArray<float>& EcalBarrelImgEng, TTreeReaderArray<float>& EcalBarrelScFiEng, TTreeReaderArray<float>& EcalEndcapPEng, TTreeReaderArray<float>& EcalEndcapNEng, 
             TTreeReaderArray<float>& HcalBarrelEng, TTreeReaderArray<float>& HcalEndcapPEng, TTreeReaderArray<float>& LFHcalEng, TTreeReaderArray<float>& HcalEndcapNEng, 
-            TTreeReaderArray<int>& simuAssocEcalBarrel, TTreeReaderArray<int>& simuAssocEcalEndcapP, TTreeReaderArray<int>& simuAssocEcalEndcapN,
+            TTreeReaderArray<int>& simuAssocEcalBarrelImg, TTreeReaderArray<int>& simuAssocEcalBarrelScFi, TTreeReaderArray<int>& simuAssocEcalEndcapP, TTreeReaderArray<int>& simuAssocEcalEndcapN,
             TTreeReaderArray<int>& simuAssocHcalBarrel, TTreeReaderArray<int>& simuAssocHcalEndcapP, TTreeReaderArray<int>& simuAssocLFHcal, TTreeReaderArray<int>& simuAssocHcalEndcapN)
 {
 
-    double ECalEnergy = 0.0;
-    double HCalEnergy = 0.0;
-    int ECalHits = 0;
-    int HCalHits = 0;
+    double EndcapNHcal_Factor = 1.0/6.0;
 
-    // E/p cut functions
+    std::string detectorNames[8] = {"EcalBarrelImaging", "EcalBarrelScFi", "EcalEndcapP", "EcalEndcapN", "HcalBarrel", "HcalEndcapP", "LFHcal", "HcalEndcapN"};
 
-    TF1 *eCalCutFunction = new TF1("eCalCutFunction","[0]/(x + [1])",0.,20.);
-    eCalCutFunction->SetParameter(0,0.29);
-    eCalCutFunction->SetParameter(1,0.23);
+    double pMin = epTrees[0].tree->GetMinimum("p");
 
-    TF1 *eCalCutWidthFunction = new TF1("eCalCutWidthFunction","3*([0]/x)",0.,20.);
-    eCalCutWidthFunction->SetParameter(0,0.09);
+    double pMax = epTrees[0].tree->GetMaximum("p");
 
-    TF1 *hCalCutFunction = new TF1("hCalCutFunction","[0]/(x + [1])",0.,20.);
-    hCalCutFunction->SetParameter(0,1.03);
-    hCalCutFunction->SetParameter(1,0.44);
+    int nRows = epTrees[0].tree->GetEntries();
 
-    TF1 *hCalCutWidthFunction = new TF1("hCalCutWidthFunction","3*([0]/x)",0.,20.);
-    hCalCutWidthFunction->SetParameter(0,0.21);
+    double energy[8], size[8];
 
-    if (EcalBarrelEng.GetSize() == simuAssocEcalBarrel.GetSize())
+    double particleMomentum = 0.;
+    double particleEta = 0.;
+
+
+    if (TMath::Abs(particleEta) > 4) return 0.0; // Outside of calorimeter acceptance
+    if (TMath::Abs(particleEta) >= 1.0 && TMath::Abs(particleEta) <= 1.3) return 0.0; // Remove overlap region between barrel and endcap calorimeters
+    if (particleMomentum < 0.05 || particleMomentum > 100.0) return 0.0;
+
+
+    if (EcalBarrelImgEng.GetSize() == simuAssocEcalBarrelImg.GetSize())
     {
-        for (int jB = 0; jB < simuAssocEcalBarrel.GetSize(); jB++) // Look for associations in the Ecal Barrel
+        for (int jI = 0; jI < simuAssocEcalBarrelImg.GetSize(); jI++) // Look for associations in the Ecal Barrel Imaging
         {
-            if (simuAssocEcalBarrel[jB] == simuID)
+            if (simuAssocEcalBarrelImg[jI] == simuID)
             {
-                ECalEnergy += EcalBarrelEng[jB];
-                ECalHits += 1.;
+                        energy[0] += EcalBarrelImgEng[jI];
+                        size[0] += 1.;
+            }
+        }
+    }
+    if (EcalBarrelScFiEng.GetSize() == simuAssocEcalBarrelScFi.GetSize())
+    {
+        for (int jS = 0; jS < simuAssocEcalBarrelScFi.GetSize(); jS++) // Look for associations in the Ecal Barrel ScFi
+        {
+            if (simuAssocEcalBarrelScFi[jS] == simuID)
+            {
+                        energy[1] += EcalBarrelScFiEng[jS];
+                        size[1] += 1.;
             }
         }
     }
@@ -59,8 +83,8 @@ bool IsMuon(TVector3 trackMom, int simuID,
         {
             if (simuAssocEcalEndcapP[jP] == simuID)
             {
-                ECalEnergy += EcalEndcapPEng[jP];
-                ECalHits += 1.;
+                energy[2] += EcalBarrelScFiEng[jP];
+                size[2] += 1.;
             }
         }
     }
@@ -70,8 +94,8 @@ bool IsMuon(TVector3 trackMom, int simuID,
         {
             if (simuAssocEcalEndcapN[jN] == simuID)
             {
-                ECalEnergy += EcalEndcapNEng[jN];
-                ECalHits += 1.;
+                energy[3] += EcalEndcapNEng[jN];
+                size[3] += 1.;
             }
         }
     }
@@ -82,8 +106,8 @@ bool IsMuon(TVector3 trackMom, int simuID,
         {
             if (simuAssocHcalBarrel[jB] == simuID)
             {
-                HCalEnergy += HcalBarrelEng[jB];
-                HCalHits += 1.;
+                energy[4] += HcalBarrelEng[jB];
+                size[4] += 1.;
             }
         }
     }
@@ -94,8 +118,8 @@ bool IsMuon(TVector3 trackMom, int simuID,
         {
             if (simuAssocHcalEndcapP[jP] == simuID)
             {
-                HCalEnergy += HcalEndcapPEng[jP];
-                HCalHits += 1.;
+                energy[5] += HcalEndcapPEng[jP];
+                size[5] += 1.;
             }
         }
     }
@@ -106,8 +130,8 @@ bool IsMuon(TVector3 trackMom, int simuID,
         {
             if (simuAssocLFHcal[jL] == simuID)
             {
-                HCalEnergy += LFHcalEng[jL];
-                HCalHits += 1.;
+                energy[6] += LFHcalEng[jL];
+                size[6] += 1.;
             }
         }
     }
@@ -119,52 +143,148 @@ bool IsMuon(TVector3 trackMom, int simuID,
         {
             if (simuAssocHcalEndcapN[jN] == simuID)
             {
-                HCalEnergy += HcalEndcapNEng[jN];
-                HCalHits += 1.;
+                energy[7] += HcalEndcapNEng[jN];
+                size[7] += 1.;
             }
         }
     }
 
+    if (energy[0] == 0.0 && energy[1] == 0.0 && energy[2] == 0.0 && energy[3] == 0.0 && energy[4] == 0.0 && energy[5] == 0.0 && energy[6] == 0.0 && energy[7] == 0.0) return 0.0; // Skip if no calorimeter energy is associated
 
-    bool ECalEpCut;
-    bool HCalEpCut;
+    double finalProbEp[8] = {1e-6, 1e-6, 1e-6, 1e-6, 1e-6, 1e-6, 1e-6, 1e-6};
+    double finalProbSize[8] = {1e-6, 1e-6, 1e-6, 1e-6, 1e-6, 1e-6, 1e-6, 1e-6};
 
-    if (trackMom.Mag() > 0.5) // Different cuts for low-momentum tracks
+    double minDeltaP = 999.0;
+
+    int bestRow = 0;
+
+    for (int detectorsI = 0; detectorsI < 8; detectorsI++)
     {
-        double cutValueEcal = eCalCutFunction->Eval(trackMom.Mag());
-        double cutWidthEcal = eCalCutWidthFunction->Eval(trackMom.Mag());
+        if (energy[detectorsI] == 0.0) continue; // Skip if no energy is deposited in this detector
+        for (int iEP = 0; iEP < nRows; iEP++) 
+        {
+            epTrees[detectorsI].tree->GetEntry(iEP);
+            double deltaP = TMath::Abs(epTrees[detectorsI].p - particleMomentum);
+                    
+            if (deltaP < minDeltaP) 
+            {
+                minDeltaP = deltaP;
+                bestRow = iEP;
+            } 
+            else 
+            {
+                break; 
+            }
+        }
+        epTrees[detectorsI].tree->GetEntry(bestRow);
+        double minDeltaEp = 999.0;
+        int bestCol = 0;
 
-        ECalEpCut = (ECalEnergy/trackMom.Mag() >= 0.0 && ECalEnergy/trackMom.Mag() <= cutValueEcal+cutWidthEcal);
-    }
-    else
-    {
-    ECalEpCut = false;
-    }
+        for (size_t jEP = 0; jEP < epTrees[detectorsI].Ep_ptr->size(); jEP++) 
+        {
+            double deltaEp = TMath::Abs(epTrees[detectorsI].Ep_ptr->at(jEP) - energy[detectorsI]/particleMomentum);
+                    
+            if (deltaEp < minDeltaEp) 
+            {
+                minDeltaEp = deltaEp;
+                bestCol = jEP;
+            } 
+            else 
+            {
+                break;
+            }
+        }
 
-    if (trackMom.Mag() > 0.5) // Different cuts for low-momentum tracks
-    {
-        double cutValueHcal = hCalCutFunction->Eval(trackMom.Mag());
-        double cutWidthHcal = hCalCutWidthFunction->Eval(trackMom.Mag());
+        finalProbEp[detectorsI] = epTrees[detectorsI].prob_ptr->at(bestCol);
 
-        HCalEpCut = (HCalEnergy/trackMom.Mag() >= cutValueHcal-cutWidthHcal && HCalEnergy/trackMom.Mag() <= cutValueHcal+cutWidthHcal);
-    }
-    else
-    {
-        HCalEpCut = false;
-    }
+        if (finalProbEp[detectorsI] <= 0)
+        {
+            if (bestCol == 0) finalProbEp[detectorsI] = epTrees[detectorsI].prob_ptr->at(bestCol+1);
+            else if (bestCol == epTrees[detectorsI].Ep_ptr->size() - 1) finalProbEp[detectorsI] = epTrees[detectorsI].prob_ptr->at(bestCol-1);
+            else finalProbEp[detectorsI] = (epTrees[detectorsI].prob_ptr->at(bestCol-1) + epTrees[detectorsI].prob_ptr->at(bestCol+1)) / 2.0;
+        }           
+            
+        minDeltaP = 999.0;
+        bestRow = 0;
 
-    
-    bool EcalHitCut = (ECalHits < 6);
-    bool HcalHitCut = (HCalHits < 9);
+        for (int iSize = 0; iSize < nRows; iSize++) 
+        {
+            sizeTrees[detectorsI].tree->GetEntry(iSize);
+            double deltaP = TMath::Abs(sizeTrees[detectorsI].p - particleMomentum);
+                    
+            if (deltaP < minDeltaP) 
+            {
+                minDeltaP = deltaP;
+                bestRow = iSize;
+            } 
+            else 
+            {
+                break; 
+            }
+        }
 
-    if (ECalEpCut && HCalEpCut && EcalHitCut && HcalHitCut)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+        sizeTrees[detectorsI].tree->GetEntry(bestRow);
+        minDeltaEp = 999.0;
+        bestCol = 0;
 
+        for (size_t jSize = 0; jSize < sizeTrees[detectorsI].size_ptr->size(); jSize++) 
+        {
+            double deltaEp = TMath::Abs(sizeTrees[detectorsI].size_ptr->at(jSize) - size[detectorsI]);
+                    
+            if (deltaEp < minDeltaEp) 
+            {
+                minDeltaEp = deltaEp;
+                bestCol = jSize;
+            } 
+            else 
+            {
+                break;
+            }
+        }
+
+        finalProbSize[detectorsI] = sizeTrees[detectorsI].prob_ptr->at(bestCol);
+
+        if (finalProbSize[detectorsI] <= 0)
+            {
+                if (bestCol == 0) finalProbSize[detectorsI] = sizeTrees[detectorsI].prob_ptr->at(bestCol+1);
+                else if (bestCol == sizeTrees[detectorsI].size_ptr->size() - 1) finalProbSize[detectorsI] = sizeTrees[detectorsI].prob_ptr->at(bestCol-1);
+                else finalProbSize[detectorsI] = (sizeTrees[detectorsI].prob_ptr->at(bestCol-1) + sizeTrees[detectorsI].prob_ptr->at(bestCol+1)) / 2.0;
+            }
+
+        }
+
+        if (energy[0] == 0.0 && energy[1] == 0.0 && energy[2] == 0.0 && energy[3] == 0.0) // Ignore Ecal probability if no energy is deposited in Ecal
+        {
+            finalProbEp[0] = 1;
+            finalProbSize[0] = 1;
+        }
+
+        for (int k = 1; k < 8; k++) // Reset any probabilities that are 0 or negative to a small value to avoid issues with log-likelihood calculation
+        {
+            if (finalProbEp[k] <= 0) finalProbEp[k] = 1e-6;
+            if (finalProbSize[k] <= 0) finalProbSize[k] = 1e-6;
+        }
+
+        double logL_muon = 0.0;
+        int measurementsCount = 0;
+
+        for (int k = 0; k < 8; k++) 
+        {
+            if (energy[k] > 0) 
+            {
+                logL_muon += TMath::Log(finalProbEp[k]);
+                logL_muon += TMath::Log(finalProbSize[k]);
+                measurementsCount += 2;
+            }
+        }
+        if (energy[4] == 0.0 && energy[5] == 0.0 && energy[6] == 0.0 && energy[7] == 0.0) // Penalise signals with no energy in the Hcal by adding a small probability
+        {
+            logL_muon += TMath::Log(1e-6);
+            logL_muon += TMath::Log(1e-6);
+            measurementsCount += 2;
+        }
+        if (measurementsCount > 0) logL_muon /= (measurementsCount/2.0);
+
+        return logL_muon;
 
 }

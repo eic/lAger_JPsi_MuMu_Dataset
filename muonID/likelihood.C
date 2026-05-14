@@ -195,7 +195,7 @@ void likelihood()
     TTreeReaderArray<float> EcalBarrelImgEng(particleSource_Reader, "EcalBarrelImagingClusters.energy");
     TTreeReaderArray<int> simuAssocEcalBarrelScFi(particleSource_Reader, "_EcalBarrelScFiClusterAssociations_sim.index");
     TTreeReaderArray<int> recoAssocEcalBarrelScFi(particleSource_Reader, "_EcalBarrelScFiClusterAssociations_rec.index");
-    TTreeReaderArray<float> EcalBarrelScFing(particleSource_Reader, "EcalBarrelScFiClusters.energy");
+    TTreeReaderArray<float> EcalBarrelScFiEng(particleSource_Reader, "EcalBarrelScFiClusters.energy");
     
 
     TTreeReaderArray<int> simuAssocEcalEndcapP(particleSource_Reader, "_EcalEndcapPClusterAssociations_sim.index");
@@ -285,13 +285,13 @@ void likelihood()
                     }
                 }
             }
-            if (EcalBarrelScFing.GetSize() == simuAssocEcalBarrelScFi.GetSize())
+            if (EcalBarrelScFiEng.GetSize() == simuAssocEcalBarrelScFi.GetSize())
             {
                 for (int jS = 0; jS < simuAssocEcalBarrelScFi.GetSize(); jS++) // Look for associations in the Ecal Barrel ScFi
                 {
                     if (simuAssocEcalBarrelScFi[jS] == simuAssoc[i])
                     {
-                        energy[1] += EcalBarrelScFing[jS];
+                        energy[1] += EcalBarrelScFiEng[jS];
                         size[1] += 1.;
                     }
                 }

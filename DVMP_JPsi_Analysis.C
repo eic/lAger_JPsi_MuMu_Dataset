@@ -54,6 +54,44 @@ void DVMP_JPsi_Analysis()
     gROOT->ProcessLine("SetePICStyle()");
     //gStyle->SetOptStat(0);
 
+    TString lookupN = "/shared/physics/physdata/nuclear/ePIC_EIC/gbx505/ePIC_JPsi/muonID/mu_20-100GeV_lookupTable.root";
+    TFile *lookupFile = new TFile(lookupN);
+
+    std::string detectorNames[8] = {"EcalBarrelImaging", "EcalBarrelScFi", "EcalEndcapP", "EcalEndcapN", "HcalBarrel", "HcalEndcapP", "LFHcal", "HcalEndcapN"};
+
+    EpLookupTree epTrees[8];
+
+    for (int i = 0; i < 8; i++) {
+        TString treeName = Form("%sEpLookupTree", detectorNames[i].c_str());
+        epTrees[i].tree = (TTree*)lookupFile->Get(treeName);
+        
+        if (!epTrees[i].tree) {
+            printf("Warning: %s not found!\n", treeName.Data());
+            continue;
+        }
+
+        epTrees[i].tree->SetBranchAddress("trueEp", &epTrees[i].Ep_ptr);
+        epTrees[i].tree->SetBranchAddress("probability", &epTrees[i].prob_ptr);
+        epTrees[i].tree->SetBranchAddress("p", &epTrees[i].p);
+    }
+
+    SizeLookupTree sizeTrees[8];
+
+    for (int i = 0; i < 8; i++) {
+        TString treeName = Form("%sSizeLookupTree", detectorNames[i].c_str());
+        sizeTrees[i].tree = (TTree*)lookupFile->Get(treeName);
+        
+        if (!sizeTrees[i].tree) {
+            printf("Warning: %s not found!\n", treeName.Data());
+            continue;
+        }
+
+        sizeTrees[i].tree->SetBranchAddress("size", &sizeTrees[i].size_ptr);
+        sizeTrees[i].tree->SetBranchAddress("probability", &sizeTrees[i].prob_ptr);
+        sizeTrees[i].tree->SetBranchAddress("p", &sizeTrees[i].p);
+    }
+
+
     TString infile="eicReconOutput/SimCampaign_26020_JPsiMuMu_10ifb_10x130ep_Pruned.root";
     //TString infile="dis_background/DIS_Q2_1_10_10x130ep_Pruned.root";
     
@@ -322,7 +360,7 @@ void DVMP_JPsi_Analysis()
     bool electronFound = false; // Flag to check if scattered electron is found
     bool electronFinderReturn = false; // Return value from electron finder
     bool muonFound = false; // Flag to check if muon is found
-    bool muonFinderReturn = false; // Return value from muon finder
+    double muonFinderReturn = -99; // Return value from muon finder
     bool invMassError = false;
     int cutEvents[6] = {0,0,0,0,0,0}; // Cut flow counter
     int eventsPassed = 0; // Events passed counter
@@ -380,7 +418,7 @@ void DVMP_JPsi_Analysis()
         electronFound = false;
         electronFinderReturn = false;
         muonFound = false;
-        muonFinderReturn = false;
+        muonFinderReturn = -99;
         invMassError = false;
         eventFail = false;
 
@@ -645,15 +683,16 @@ void DVMP_JPsi_Analysis()
             }
             //recoTrackMom = TVector3(trackMomX[i],trackMomY[i],trackMomZ[i]);
             int simuID = simuAssoc[i];
-            muonFinderReturn =  IsMuon(recoTrackMom[i], simuID, EcalBarrelEng, EcalEndcapPEng, EcalEndcapNEng, HcalBarrelEng, HcalEndcapPEng, LFHcalEng, HcalEndcapNEng, 
-                                        simuAssocEcalBarrel, simuAssocEcalEndcapP, simuAssocEcalEndcapN, simuAssocHcalBarrel, simuAssocHcalEndcapP, simuAssocLFHcal, simuAssocHcalEndcapN);
+            muonFinderReturn =  IsMuon(recoTrackMom[i], simuID, epTrees, sizeTrees, 
+                                        EcalBarrelImgEng, EcalBarrelScFiEng, EcalEndcapPEng, EcalEndcapNEng, HcalBarrelEng, HcalEndcapPEng, LFHcalEng, HcalEndcapNEng, 
+                                        simuAssocEcalBarrelImg, simuAssocEcalBarrelScFi, simuAssocEcalEndcapP, simuAssocEcalEndcapN, simuAssocHcalBarrel, simuAssocHcalEndcapP, simuAssocLFHcal, simuAssocHcalEndcapN);
                 
 
-            if (muonFinderReturn == true && trackCharge[i] == 1.0)
+            if (muonFinderReturn >= -4.5 && trackCharge[i] == 1.0)
             {
                 recoTrackIndex[1] = i;
             }
-            else if (muonFinderReturn == true && trackCharge[i] == -1.0) 
+            else if (muonFinderReturn >= -4.5 && trackCharge[i] == -1.0) 
             {
                 recoTrackIndex[2] = i;
             }
