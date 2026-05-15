@@ -77,15 +77,15 @@ void likelihood()
     TString lookupN = "mu_20-100GeV_lookupTable.root";
     TFile *lookupFile = new TFile(lookupN);
 
-    //TString infile="../eicReconOutput/SimCampaign_26020_JPsiMuMu_10ifb_10x130ep_Pruned.root";
+    TString infile="../eicReconOutput/SimCampaign_26020_JPsiMuMu_10ifb_10x130ep_Pruned.root";
     //TString infile="reconOut/pi_20-100GeV_reconOut.root";
-    TString infile="../dis_background/DIS_Q2_1_100_10x250ep_Pruned.root";
+    //TString infile="../dis_background/DIS_Q2_1_100_10x130ep_Pruned.root";
 
     double EndcapNHcal_Factor = 1.0/6.0;
 
-    //std::string outfilename = "outputs/SimCampaign_26020_JPsiMuMu_10ifb_10x130ep_likelihoodPlots.root";
+    std::string outfilename = "outputs/SimCampaign_26020_JPsiMuMu_10ifb_10x130ep_likelihoodPlots.root";
     //std::string outfilename = "outputs/pi_20-100GeV_likelihoodPlots.root";
-    std::string outfilename = "outputs/DIS_Q2_1_100_10x250ep_likelihoodPlots.root";
+    //std::string outfilename = "outputs/DIS_Q2_1_100_10x130ep_likelihoodPlots.root";
 
 
     std::string detectorNames[8] = {"EcalBarrelImaging", "EcalBarrelScFi", "EcalEndcapP", "EcalEndcapN", "HcalBarrel", "HcalEndcapP", "LFHcal", "HcalEndcapN"};
@@ -225,13 +225,13 @@ void likelihood()
 
     // Histograms
 
-    TH1D *h_muonLikelihood = new TH1D("h_muonLikelihood", "Muon Likelihood;Likelihood;Entries", 100.0, -60.0, 10.0);
-    TH2D *h_muonLikelihoodVsp = new TH2D("h_muonLikelihoodVsp", "Muon Likelihood vs p;Momentum (GeV);Likelihood", 500, 0.0, 100.0, 100.0, -60.0, 10.0);
-    TH2D *h_muonLikelihoodVsEta = new TH2D("h_muonLikelihoodVsEta", "Muon Likelihood vs Eta;Eta;Likelihood", 100, -4.0, 4.0, 100.0, -60.0, 10.0);
+    TH1D *h_muonLikelihood = new TH1D("h_muonLikelihood", "Muon Likelihood;Likelihood;Entries", 100.0, -30.0, 0.0);
+    TH2D *h_muonLikelihoodVsp = new TH2D("h_muonLikelihoodVsp", "Muon Likelihood vs p;Momentum (GeV);Likelihood", 500, 0.0, 100.0, 100.0, -30.0, 0.0);
+    TH2D *h_muonLikelihoodVsEta = new TH2D("h_muonLikelihoodVsEta", "Muon Likelihood vs Eta;Eta;Likelihood", 100, -4.0, 4.0, 100.0, -30.0, 0.0);
 
-    TH1D *h_nonMuonLikelihood = new TH1D("h_nonMuonLikelihood", "Non-Muon Likelihood;Likelihood;Entries", 100.0, -60.0, 10.0);
-    TH2D *h_nonMuonLikelihoodVsp = new TH2D("h_nonMuonLikelihoodVsp", "Non-Muon Likelihood vs p;Momentum (GeV);Likelihood", 500, 0.0, 100.0, 100.0, -60.0, 10.0);
-    TH2D *h_nonMuonLikelihoodVsEta = new TH2D("h_nonMuonLikelihoodVsEta", "Non-Muon Likelihood vs Eta;Eta;Likelihood", 100, -4.0, 4.0, 100.0, -60.0, 10.0);
+    TH1D *h_nonMuonLikelihood = new TH1D("h_nonMuonLikelihood", "Non-Muon Likelihood;Likelihood;Entries", 100.0, -30.0, 0.0);
+    TH2D *h_nonMuonLikelihoodVsp = new TH2D("h_nonMuonLikelihoodVsp", "Non-Muon Likelihood vs p;Momentum (GeV);Likelihood", 500, 0.0, 100.0, 100.0, -30.0, 0.0);
+    TH2D *h_nonMuonLikelihoodVsEta = new TH2D("h_nonMuonLikelihoodVsEta", "Non-Muon Likelihood vs Eta;Eta;Likelihood", 100, -4.0, 4.0, 100.0, -30.0, 0.0);
     
     int eventID = 0;
 
