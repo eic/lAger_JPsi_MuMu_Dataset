@@ -65,10 +65,10 @@ void DVMP_histograms()
     TColor::GetColor("#9c9ca1"),     // grey
     };
 
-    TString infileN = "outputs/DVMP_JPsi_AnalysisOutput_10ifb_10x130ep.root";
+    TString infileN = "outputs/DVMP_SimCampaign_JPsi_AnalysisOutput_10ifb_10x130ep.root";
     TFile *inFile = new TFile(infileN);
 
-    std::string outfilename = "outputs/DVMP_JPsi_hists_10ifb_10x130ep.root";
+    std::string outfilename = "outputs/DVMP_SimCampaign_JPsi_hists_10ifb_10x130ep.root";
 
     // Set output file for the histograms
     TFile *ofile = TFile::Open(outfilename.c_str(),"RECREATE");
@@ -97,13 +97,18 @@ void DVMP_histograms()
 
     TH2D* reconQ2_DA_vs_trueQ2 = (TH2D*) inFile->Get("kinematicDifferences/reconQ2_DA_vs_trueQ2");
 
-    TH1D* truet = (TH1D*) inFile->Get("kinematics/truet");
-    TH1D* recont_eXBABE = (TH1D*) inFile->Get("kinematics/recont_eXBABE");
-    TH1D* recont_eXPT = (TH1D*) inFile->Get("kinematics/recont_eXPT");
-    TH1D* recont_eX = (TH1D*) inFile->Get("kinematics/recont_eX");
-    TH1D* recont_BABE = (TH1D*) inFile->Get("kinematics/recont_BABE");
+    TH1D* truet = (TH1D*) inFile->Get("tDistributions/truet");
+    TH1D* truet_accepted = (TH1D*) inFile->Get("tDistributions/truet_accepted");
+    TH1D* t_acceptanceScale = (TH1D*) inFile->Get("tDistributions/t_acceptanceScale");
 
-    TH2D* recont_eXBABE_vs_truet = (TH2D*) inFile->Get("kinematics/recont_eXBABE_vs_truet");
+    TH1D* recont_eXBABE = (TH1D*) inFile->Get("tDistributions/recont_eXBABE");
+    TH1D* recont_eXBABE_scaled = (TH1D*) inFile->Get("tDistributions/recont_eXBABE_scaled");
+
+    TH1D* recont_eXPT = (TH1D*) inFile->Get("tDistributions/recont_eXPT");
+    TH1D* recont_eX = (TH1D*) inFile->Get("tDistributions/recont_eX");
+    TH1D* recont_BABE = (TH1D*) inFile->Get("tDistributions/recont_BABE");
+
+    TH2D* recont_eXBABE_vs_truet = (TH2D*) inFile->Get("tDistributions/recont_eXBABE_vs_truet");
 
     TH1D* deltat_eXBABE = (TH1D*) inFile->Get("kinematicDifferences/deltat_eXBABE");
     TH1D* deltat_eXPT = (TH1D*) inFile->Get("kinematicDifferences/deltat_eXPT");
@@ -143,7 +148,15 @@ void DVMP_histograms()
     TH1D* truet_XbjkC = (TH1D*) inFile->Get("tDistributionsByXbjk/truet_XbjkC");
     TH1D* recont_XbjkC = (TH1D*) inFile->Get("tDistributionsByXbjk/recont_XbjkC");
     
-    
+    TF1* fBT_true = (TF1*) inFile->Get("bTDistributions/fBT_true");
+    TF1* fBT_recon = (TF1*) inFile->Get("bTDistributions/fBT_recon");
+    TGraph* g_fBT_recon = (TGraph*) inFile->Get("bTDistributions/g_fBT_recon");
+
+    if (g_fBT_recon == nullptr)
+    {
+        TGraph* g_fBT_recon = (TGraph*) inFile->Get("bTDistributions/Graph");  
+    }
+
     //
     // Muon angle
     //
@@ -371,6 +384,10 @@ void DVMP_histograms()
     // t_xbjk
     //
 
+    recont_XbjkA->Divide(t_acceptanceScale);
+    recont_XbjkB->Divide(t_acceptanceScale);
+    recont_XbjkC->Divide(t_acceptanceScale);
+
     TCanvas* C_t_xbjk = new TCanvas("C_t_xbjk", "C_t_xbjk",1100,800);
     TLegend* legend_t_xbjk = new TLegend(0.5, 0.7, 0.7, 0.9);
 
@@ -397,6 +414,33 @@ void DVMP_histograms()
     C_t_xbjk->Update();
     legend_t_xbjk->Draw();
     text_t_xbjk->Draw();
+
+    //
+    // bT distribution
+    //
+
+    TCanvas* C_bT = new TCanvas("C_bT", "C_bT",1100,800);
+    TLegend* legend_bT = new TLegend(0.5, 0.7, 0.7, 0.9);
+
+    g_fBT_recon->SetMarkerColor(sixColourScheme[2]);
+    g_fBT_recon->Draw("ELP");
+    legend_bT->AddEntry(g_fBT_recon, "Reconstructed bT", "p");
+    fBT_true->SetLineColor(sixColourScheme[0]);
+    fBT_true->Draw("SAME");
+    legend_bT->AddEntry(fBT_true, "True bT", "l");
+
+    TPaveText* text_bT = new TPaveText(0.2, 0.7, 0.4, 0.9, "NDC");
+    text_bT->AddText("ePIC Performance");
+    text_bT->AddText("e+p, 10ex130p");
+    text_bT->AddText("lAger 3.6.1");
+    text_bT->AddText("DVMP J/#psi -> #mu#mu");
+    text_bT->SetTextAlign(12);
+    text_bT->SetFillStyle(0);
+    text_bT->SetBorderSize(0);
+
+    C_bT->Update();
+    legend_bT->Draw();
+    text_bT->Draw();
 
 
 }

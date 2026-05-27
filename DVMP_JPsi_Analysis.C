@@ -92,6 +92,11 @@ void DVMP_JPsi_Analysis()
     }
 
 
+    TF1 *tDistFit = new TF1("tDistFit", "[0]*exp([1]*x)", 0, 2);
+
+    TF1 *fBT_true = new TF1("fBT_true", "(([0]*[1])/([1]*[1] + x*x))*(1-exp(-1.6*[1])*cos(1.6*x)) +  (([0]*x)/([1]*[1] + x*x))*(exp(-1.6*[1])*sin(1.6*x))", 0, 20);
+    TF1 *fBT_recon = new TF1("fBT_recon", "(([0]*[1])/([1]*[1] + x*x))*(1-exp(-1.6*[1])*cos(1.6*x)) +  (([0]*x)/([1]*[1] + x*x))*(exp(-1.6*[1])*sin(1.6*x))", 0, 20);
+
     TString infile="eicReconOutput/SimCampaign_26020_JPsiMuMu_10ifb_10x130ep_Pruned.root";
     //TString infile="dis_background/DIS_Q2_1_10_10x130ep_Pruned.root";
     
@@ -230,6 +235,11 @@ void DVMP_JPsi_Analysis()
     TH1D *matchedProtonEta = new TH1D("matchedProtonEta", " #eta of Thrown Protons That Have Matching Track",150,-15.,15.);
     TH1D *protonEff = new TH1D("protonEff","Efficency;  #eta",150,-15.,15.);
 
+    TH1D *b0ProtonEta = new TH1D("B0ProtonEta", " #eta of Thrown Protons That Have B0 Deposit",150,-15.,15.);
+    TH1D *matchedB0ProtonEta = new TH1D("matchedB0ProtonEta", " #eta of Thrown Protons That Have B0 Deposit",150,-15.,15.);
+    TH1D *rPProtonEta = new TH1D("RPProtonEta", " #eta of Thrown Protons That Have RP Track",150,-15.,15.);
+    TH1D *matchedRPProtonEta = new TH1D("matchedRPProtonEta", " #eta of Thrown Protons That Have RP Track",150,-15.,15.);
+
     TH1D *muonEta = new TH1D("muonEta", " #eta of Thrown Muons",100,-5.,5.);
     TH1D *matchedMuonEta = new TH1D("matchedMuonEta", " #eta of Thrown Muons That Have Matching Track",100,-5.,5.);
     TH1D *muonEff = new TH1D("muonEff","Efficency;  #eta",100,-5.,5.);
@@ -311,10 +321,20 @@ void DVMP_JPsi_Analysis()
     TH2D* reconQ2_DA_vs_trueQ2 = new TH2D("reconQ2_DA_vs_trueQ2","Reconstructed Q^{2} using the DA Method vs True Q^{2}; Q_{MC}^{2} (GeV/c^{2}); Q_{DA}^{2} (GeV/c^{2})",100,0.,50.,100,0.,50.);
 
     TH1D* truet = new TH1D("truet","True t Distribution; t (GeV/c)",100,0.,2.);
+    TH1D* truet_accepted = new TH1D("truet_accepted","True t Distribution for Accepted Events; t (GeV/c)",100,0.,2.);
+    TH1D* t_acceptanceScale = new TH1D("t_acceptanceScale","Acceptance Scale Factor as a Function of t; t (GeV/c); 1/Acceptance",100,0.,2.);
     TH1D* recont_eXBABE = new TH1D("recont_eXBABE","Reconstructed t Distribution using the eXBABE Method; t (GeV/c)",100,0.,2.);
+    TH1D* recont_eXBABE_scaled = new TH1D("recont_eXBABE_scaled","Reconstructed t Distribution using the eXBABE Method and scaled by acceptance; t (GeV/c)",100,0.,2.);
     TH1D* recont_eXPT = new TH1D("recont_eXPT","Reconstructed t Distribution using the eXPT Method; t (GeV/c)",100,0.,2.);
     TH1D* recont_eX = new TH1D("recont_eX","Reconstructed t Distribution using the eX Method; t (GeV/c)",100,0.,2.);
     TH1D* recont_BABE = new TH1D("recont_BABE","Reconstructed t Distribution using the BABE Method; t (GeV/c)",100,0.,2.);
+    
+    TH1D* recont_transverse_eXBABE = new TH1D("recont_transverse_eXBABE","Reconstructed t Distribution using the eXBABE Method with Transverse Momentum; t (GeV/c)",100,0.,2.);
+
+    TH1D* b0TrueT = new TH1D("b0TrueT","True t Distribution for Protons with B0 Deposit; t (GeV/c)",100,0.,2.);
+    TH1D* b0Recont_eXBABE = new TH1D("b0Recont_eXBABE","Reconstructed t Distribution using the eXBABE Method for Protons with B0 Deposit; t (GeV/c)",100,0.,2.);
+    TH1D* rPTrueT = new TH1D("rPTrueT","True t Distribution for Protons with RP Track; t (GeV/c)",100,0.,2.);
+    TH1D* rPRecont_eXBABE = new TH1D("rPRecont_eXBABE","Reconstructed t Distribution using the eXBABE Method for Protons with RP Track; t (GeV/c)",100,0.,2.);
 
     TH1D* deltat_eXBABE = new TH1D("deltat_eXBABE","Delta t (Reconstructed - True) using the eXBABE Method; (t - t_{MC})/t_{MC} (%)",200,-100.,100.);
     TH1D* deltat_eXPT = new TH1D("deltat_eXPT","Delta t (Reconstructed - True) using the eXPT Method; (t - t_{MC})/t_{MC} (%)",200,-100.,100.);
@@ -322,6 +342,9 @@ void DVMP_JPsi_Analysis()
     TH1D* deltat_BABE = new TH1D("deltat_BABE","Delta t (Reconstructed - True) using the BABE Method; (t - t_{MC})/t_{MC} (%)",200,-100.,100.);
 
     TH2D* recont_eXBABE_vs_truet = new TH2D("recont_eXBABE_vs_truet","Reconstructed t using the eXBABE Method vs True t; t_{MC} (GeV/c); t_{eXBABE} (GeV/c)",100,0.,2.,100,0.,2.);
+    TH2D* recont_eXPT_vs_truet = new TH2D("recont_eXPT_vs_truet","Reconstructed t using the eXPT Method vs True t; t_{MC} (GeV/c); t_{eXPT} (GeV/c)",100,0.,2.,100,0.,2.);
+    TH2D* recont_eXPT_vs_recont_eXBABE = new TH2D("recont_eXPT_vs_eXBABE","Reconstructed t using the eXPT Method vs Reconstructed t using the eXBABE Method; t_{eXBABE} (GeV/c); t_{eXPT} (GeV/c)",100,0.,2.,100,0.,2.);
+    TH2D* recont_BABE_vs_recont_eXBABE = new TH2D("recont_BABE_vs_recont_eXBABE","Reconstructed t using the BABE Method vs Reconstructed t using the eXBABE Method; t_{eXBABE} (GeV/c); t_{BABE} (GeV/c)",100,0.,2.,100,0.,2.);
     TH2D* deltat_eXBABE_vs_truet = new TH2D("deltat_eXBABE_vs_truet","Delta t (Reconstructed - True) using the eXBABE Method vs True t; t_{MC} (GeV/c); (t_{eXBABE} - t_{MC})/t_{MC}",100,0.,2.,200,-100.,100.);
 
     TH1D* truey = new TH1D("truey","True y Distribution",100,0.,1.0);
@@ -356,6 +379,9 @@ void DVMP_JPsi_Analysis()
     TH1D* recont_XbjkC = new TH1D("recont_XbjkC","Reconstructed t distribution with bjorken x binning; t_{eXBABE} (GeV/c)",100,0.,2.);
 
     
+    bool isB0 = false; // Flag to check if event has B0 candidate
+    bool isRP = false; // Flag to check if event has RP candidate
+
     bool eventFail = false; 
     bool electronFound = false; // Flag to check if scattered electron is found
     bool electronFinderReturn = false; // Return value from electron finder
@@ -421,6 +447,9 @@ void DVMP_JPsi_Analysis()
         muonFinderReturn = -99;
         invMassError = false;
         eventFail = false;
+
+        isB0 = false;
+        isRP = false;
 
         // Reset kinematic variables
         {
@@ -550,6 +579,7 @@ void DVMP_JPsi_Analysis()
             if (RPMomZ[i] < 0.) RPMomZ[i] = -RPMomZ[i]; // Correct for negative z momentum in RP
             scatpMomR = TVector3(RPMomX[i],RPMomY[i],RPMomZ[i]);
             scatp4MomR.SetPxPyPzE(RPMomX[i],RPMomY[i],RPMomZ[i], RPEng[i]);
+            isRP = true;
         }
         if (scatpMomR.Mag() == 0.) 
         {
@@ -561,10 +591,11 @@ void DVMP_JPsi_Analysis()
                     recoTrackMom[i] = TVector3(ttrackMomX[i],ttrackMomY[i],ttrackMomZ[i]);
                     recoTrack4Mom[i].SetPxPyPzE(ttrackMomX[i],ttrackMomY[i],ttrackMomZ[i], TMath::Sqrt(ttrackMomX[i]*ttrackMomX[i] + ttrackMomY[i]*ttrackMomY[i] + ttrackMomZ[i]*ttrackMomZ[i] + muMass*muMass));
                     
-                    if (TMath::Abs(recoTrackMom[i].Mag() - beampMom.Mag()) < 15) // If truth seeded track momentum matches beam proton momentum, identify as proton
+                    if (TMath::Abs(recoTrackMom[i].Mag() - beampMom.Mag()) < 15 && recoTrackMom[i].Eta() > 4.0) // If truth seeded track momentum matches beam proton momentum, identify as proton
                     {
                         scatpMomR = recoTrackMom[i];
-                        scatp4MomR = recoTrack4Mom[i];
+                        scatpMomR.RotateY(crossingAngle); // Rotate track momentum back to lab frame
+                        scatp4MomR.SetPxPyPzE(scatpMomR.X(),scatpMomR.Y(),scatpMomR.Z(), recoTrack4Mom[i].E());
                         break;
                     }
                 
@@ -575,16 +606,18 @@ void DVMP_JPsi_Analysis()
             {
                 for (unsigned int i = 0; i < B0Eng.GetSize(); i++)
                 {   
-                    if (B0Eng[i] < 2) continue; // Only look for large deposits in the B0
+                    if (B0Eng[i] <= 0.1) continue; // Require deposit in the B0
                     for (unsigned int i = 0; i < ttrackEng.GetSize(); i++)
                     {
                         recoTrackMom[i] = TVector3(ttrackMomX[i],ttrackMomY[i],ttrackMomZ[i]);
                         recoTrack4Mom[i].SetPxPyPzE(ttrackMomX[i],ttrackMomY[i],ttrackMomZ[i], TMath::Sqrt(ttrackMomX[i]*ttrackMomX[i] + ttrackMomY[i]*ttrackMomY[i] + ttrackMomZ[i]*ttrackMomZ[i] + muMass*muMass));
                         
-                        if (TMath::Abs(recoTrackMom[i].Mag() - beampMom.Mag()) < 15) // If truth seeded track momentum matches beam proton momentum, identify as proton
+                        if ((TMath::Abs(recoTrackMom[i].Mag() - beampMom.Mag()) < 15) && recoTrackMom[i].Eta() > 4.0) // If truth seeded track momentum matches beam proton momentum, identify as proton
                         {
                             scatpMomR = recoTrackMom[i];
-                            scatp4MomR = recoTrack4Mom[i];
+                            scatpMomR.RotateY(crossingAngle); // Rotate track momentum back to lab frame
+                            scatp4MomR.SetPxPyPzE(scatpMomR.X(),scatpMomR.Y(),scatpMomR.Z(), recoTrack4Mom[i].E());
+                            isB0 = true;
                             break;
                         }
                     
@@ -607,6 +640,19 @@ void DVMP_JPsi_Analysis()
         { 
             cutEvents[1]++;
             continue; 
+        }
+
+        if (isRP == true) 
+        {
+            rPProtonEta->Fill(scatpMomT.PseudoRapidity());
+            matchedRPProtonEta->Fill(scatpMomR.PseudoRapidity());
+            rPTrueT->Fill(t_truth);
+        }
+        if (isB0 == true)
+        {
+            b0ProtonEta->Fill(scatpMomT.PseudoRapidity());
+            matchedB0ProtonEta->Fill(scatpMomR.PseudoRapidity());
+            b0TrueT->Fill(t_truth);
         }
 
         // Fill reconstructed track momentum vectors and find true PID
@@ -647,8 +693,8 @@ void DVMP_JPsi_Analysis()
             }
             //recoTrackMom = TVector3(trackMomX[i],trackMomY[i],trackMomZ[i]);
             int simuID = simuAssoc[i];
-            electronFinderReturn =  IsElectron(recoTrackMom[i], simuID, EcalBarrelEng, EcalEndcapPEng, EcalEndcapNEng, simuAssocEcalBarrel, simuAssocEcalEndcapP, simuAssocEcalEndcapN);
-            
+            if (recoTrackMom[i].Eta() > -5.0) electronFinderReturn =  IsElectron(recoTrackMom[i], simuID, EcalBarrelEng, EcalEndcapPEng, EcalEndcapNEng, simuAssocEcalBarrel, simuAssocEcalEndcapP, simuAssocEcalEndcapN);
+            else electronFinderReturn = true; // if track is in far backward region, assume it's the electron
 
             if (electronFinderReturn == true && electronFound == true) // If more than one electron found, skip event
             {
@@ -857,9 +903,19 @@ void DVMP_JPsi_Analysis()
         vec_t_XPT3.RotateY(crossingAngle);
         ROOT::Math::PxPyPzEVector vec_t_XPT = ROOT::Math::PxPyPzEVector(vec_t_XPT3.X(), vec_t_XPT3.Y(), vec_t_XPT3.Z(), vec_t_XPT_sum.E());
 
-        ROOT::Math::PxPyPzEVector vec_PMiss_Rec = (beamE4Mom + beamp4Mom) - (scatE4MomR + JPsi4MomR);
-        ROOT::Math::PxPyPzEVector scatp4MomR_corr = ROOT::Math::PxPyPzEVector(vec_PMiss_Rec.P()*sin(scatp4MomT.Theta())*cos(scatp4MomT.Phi()), vec_PMiss_Rec.P()*sin(scatp4MomT.Theta())*sin(scatp4MomT.Phi()), vec_PMiss_Rec.P()*cos(scatp4MomT.Theta()), sqrt(pow(vec_PMiss_Rec.P(),2)+(pow(pMass,2))));
+        ROOT::Math::PxPyPzEVector vec_PMiss_Rec = (beamE4Mom + beamp4Mom) - vec_t_XPT;
+        ROOT::Math::PxPyPzEVector scatp4MomR_corr = ROOT::Math::PxPyPzEVector(vec_PMiss_Rec.P()*sin(scatp4MomR.Theta())*cos(scatp4MomR.Phi()), vec_PMiss_Rec.P()*sin(scatp4MomR.Theta())*sin(scatp4MomR.Phi()), vec_PMiss_Rec.P()*cos(scatp4MomR.Theta()), sqrt(pow(vec_PMiss_Rec.P(),2)+(pow(pMass,2))));
 
+        double Px_miss = (beamE4Mom.Px() + beamp4Mom.Px()) - (scatE4MomR.Px() + JPsi4MomR.Px());
+        double Py_miss = (beamE4Mom.Py() + beamp4Mom.Py()) - (scatE4MomR.Py() + JPsi4MomR.Py());
+        double Pt_miss = sqrt(Px_miss*Px_miss + Py_miss*Py_miss);
+
+        double theta_BA = scatp4MomR.Theta(); 
+        double Pz_corr = Pt_miss / tan(theta_BA);
+
+        ROOT::Math::PxPyPzEVector scatp4MomR_corr_transverse = ROOT::Math::PxPyPzEVector(Px_miss, Py_miss, Pz_corr, sqrt(Pt_miss*Pt_miss + Pz_corr*Pz_corr + pMass*pMass));
+        
+        
         y_e =(beamp4Mom.Dot(beamE4Mom - scatE4MomR))/(beamE4Mom.Dot(beamE4Mom));
         Q2_e = -(beamE4Mom - scatE4MomR).mag2();
         x_e = Q2_e/(4*beamE4Mom.E()*beamp4Mom.E()*y_e);
@@ -881,6 +937,8 @@ void DVMP_JPsi_Analysis()
         t_eXPT = (vec_t_XPT.Perp2()); // Rotate vetors prior to getting perpendicular component
         t_eXBABE = -1*((beamp4Mom - scatp4MomR_corr).mag2());
 
+        double t_transverse_eXBABE = -1*((beamp4Mom - scatp4MomR_corr_transverse).mag2());
+
         // Fill kinematic histograms
         reconQ2_e->Fill(Q2_e);
         reconQ2_JB->Fill(Q2_JB);
@@ -893,16 +951,23 @@ void DVMP_JPsi_Analysis()
 
         reconQ2_DA_vs_trueQ2->Fill(Q2_truth, Q2_DA);
 
+        truet_accepted->Fill(t_truth);
+        t_acceptanceScale->Fill(t_truth);
         recont_eXBABE->Fill(t_eXBABE);
+        recont_eXBABE_scaled->Fill(t_eXBABE);
         recont_eXPT->Fill(t_eXPT);
         recont_eX->Fill(t_eX);
         recont_BABE->Fill(t_BABE);
+        recont_transverse_eXBABE->Fill(t_transverse_eXBABE);
         deltat_eXBABE->Fill(100*(t_eXBABE - t_truth)/t_truth);
         deltat_eXPT->Fill(100*(t_eXPT - t_truth)/t_truth);
         deltat_eX->Fill(100*(t_eX - t_truth)/t_truth);
         deltat_BABE->Fill(100*(t_BABE - t_truth)/t_truth);
 
         recont_eXBABE_vs_truet->Fill(t_truth, t_eXBABE);
+        recont_eXPT_vs_truet->Fill(t_truth, t_eXPT);
+        recont_eXPT_vs_recont_eXBABE->Fill(t_eXBABE, t_eXPT);
+        recont_BABE_vs_recont_eXBABE->Fill(t_eXBABE, t_BABE);
         deltat_eXBABE_vs_truet->Fill(t_truth, 100*(t_eXBABE - t_truth)/t_truth);
 
         recony_e->Fill(y_e);
@@ -940,6 +1005,16 @@ void DVMP_JPsi_Analysis()
             recont_XbjkC->Fill(t_eXBABE);
           }
         }
+
+
+        if (isRP == true) 
+        {
+            rPRecont_eXBABE->Fill(t_eXBABE);
+        }
+        if (isB0 == true)
+        {
+            b0Recont_eXBABE->Fill(t_eXBABE);
+        }
     } 
 
     std::cout << "Event Processing Complete" << std::endl;
@@ -968,6 +1043,55 @@ void DVMP_JPsi_Analysis()
     muonMomEff->Divide(muonMomHist);
     JPsiMomEff->Divide(JPsiMomHist);
 
+    t_acceptanceScale->Divide(truet);
+    recont_eXBABE_scaled->Divide(t_acceptanceScale);
+
+    truet->Scale(1.0/(lumi*10e5)); // Scale by luminosity to get cross section
+    truet->GetYaxis()->SetTitle("d#sigma/dt (nb/GeV^{2})");
+
+    recont_eXBABE_scaled->Scale(1.0/(lumi*10e5)); // Scale by luminosity to get cross section
+    recont_eXBABE_scaled->GetYaxis()->SetTitle("d#sigma/dt (nb/GeV^{2})");
+
+    truet->Fit(tDistFit, "R");
+    double A_true = tDistFit->GetParameter(0);
+    double B_true = tDistFit->GetParameter(1);
+
+    recont_eXBABE_scaled->Fit(tDistFit, "R");
+    double A_recont = tDistFit->GetParameter(0);
+    double B_recont = tDistFit->GetParameter(1);
+
+    fBT_true->SetParameter(0, A_true);
+    fBT_true->SetParameter(1, -B_true);
+    fBT_recon->SetParameter(0, A_recont);
+    fBT_recon->SetParameter(1, -B_recont);
+
+    std::vector<double> bT;
+    std::vector<double> fBT_recon_values;
+
+    for (int nBins = 0; nBins < truet->GetNbinsX(); nBins++)
+    {
+        double bT_binCenter = truet->GetBinCenter(nBins+1)*10;
+        double fBT_recon_value = fBT_recon->Eval(bT_binCenter);
+        bT.push_back(bT_binCenter);
+        fBT_recon_values.push_back(fBT_recon->Eval(bT_binCenter));
+    }
+
+    TGraph *g_fBT_recon = new TGraph(truet->GetNbinsX(), bT.data(), fBT_recon_values.data());
+    g_fBT_recon->SetName("g_fBT_recon");
+    g_fBT_recon->SetTitle("f_{BT} from Reconstructed t;b_{T} (GeV^{2});f_{BT}");
+
+    double truefBT_integral = fBT_true->Integral(0, 20);
+    double reconfBT_integral = fBT_recon->Integral(0, 20);
+    
+    TF1 *fBT_true_normalised = new TF1("fBT_true_normalised", "(([0]*[1])/([1]*[1] + x*x))*(1-exp(-1.6*[1])*cos(1.6*x)) +  (([0]*x)/([1]*[1] + x*x))*(exp(-1.6*[1])*sin(1.6*x))", 0, 20);
+    fBT_true_normalised->SetParameter(0, A_true/truefBT_integral);
+    fBT_true_normalised->SetParameter(1, -B_true);
+
+
+    TF1 *fBT_recon_normalised = new TF1("fBT_recon_normalised", "(([0]*[1])/([1]*[1] + x*x))*(1-exp(-1.6*[1])*cos(1.6*x)) +  (([0]*x)/([1]*[1] + x*x))*(exp(-1.6*[1])*sin(1.6*x))", 0, 20);
+    fBT_recon_normalised->SetParameter(0, A_recont/reconfBT_integral);
+    fBT_recon_normalised->SetParameter(1, -B_recont);
+
     // Write histograms to file
     ofile->cd();
     ofile->mkdir("electrons");
@@ -987,6 +1111,10 @@ void DVMP_JPsi_Analysis()
     protonEta->Write();
     matchedProtonEta->Write();
     protonEff->Write();
+    rPProtonEta->Write();
+    matchedRPProtonEta->Write();
+    b0ProtonEta->Write();
+    matchedB0ProtonEta->Write();
     protonMomHist->Write();
     matchedProtonMomHist->Write();
     protonMomEff->Write();
@@ -1045,12 +1173,6 @@ void DVMP_JPsi_Analysis()
     reconQ2_DA->Write();
     reconQ2_sigma->Write();
     reconQ2_DA_vs_trueQ2->Write();
-    truet->Write();
-    recont_eXBABE->Write();
-    recont_eXPT->Write();
-    recont_eX->Write();
-    recont_BABE->Write();
-    recont_eXBABE_vs_truet->Write();
     truey->Write();
     recony_e->Write();
     recony_JB->Write();
@@ -1062,6 +1184,26 @@ void DVMP_JPsi_Analysis()
     reconx_JB->Write();
     reconx_DA->Write();
     reconx_sigma->Write();
+    ofile->cd("..");
+    ofile->mkdir("tDistributions");
+    ofile->cd("tDistributions");
+    truet->Write();
+    truet_accepted->Write();
+    t_acceptanceScale->Write();
+    b0TrueT->Write();
+    rPTrueT->Write();
+    recont_eXBABE->Write();
+    recont_eXBABE_scaled->Write();
+    recont_transverse_eXBABE->Write();
+    b0Recont_eXBABE->Write();
+    rPRecont_eXBABE->Write();
+    recont_eXPT->Write();
+    recont_eX->Write();
+    recont_BABE->Write();
+    recont_eXBABE_vs_truet->Write();
+    recont_eXPT_vs_truet->Write();
+    recont_eXPT_vs_recont_eXBABE->Write();
+    recont_BABE_vs_recont_eXBABE->Write();
     ofile->cd("..");
     ofile->mkdir("kinematicDifferences");
     ofile->cd("kinematicDifferences");
@@ -1092,6 +1234,15 @@ void DVMP_JPsi_Analysis()
     recont_XbjkB->Write();
     recont_XbjkC->Write();
     ofile->cd("..");
+    ofile->mkdir("bTDistributions");
+    ofile->cd("bTDistributions");
+    fBT_true->Write();
+    fBT_recon->Write();
+    g_fBT_recon->Write();
+    fBT_true_normalised->Write();
+    fBT_recon_normalised->Write();
+    ofile->cd("..");
+
 
 
     ofile->Close(); // Close output file
