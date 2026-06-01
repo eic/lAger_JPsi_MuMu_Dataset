@@ -97,7 +97,7 @@ void DVMP_JPsi_Analysis()
     TF1 *fBT_true = new TF1("fBT_true", "(([0]*[1])/([1]*[1] + x*x))*(1-exp(-1.6*[1])*cos(1.6*x)) +  (([0]*x)/([1]*[1] + x*x))*(exp(-1.6*[1])*sin(1.6*x))", 0, 20);
     TF1 *fBT_recon = new TF1("fBT_recon", "(([0]*[1])/([1]*[1] + x*x))*(1-exp(-1.6*[1])*cos(1.6*x)) +  (([0]*x)/([1]*[1] + x*x))*(exp(-1.6*[1])*sin(1.6*x))", 0, 20);
 
-    TString infile="eicReconOutput/SimCampaign_26020_JPsiMuMu_10ifb_10x130ep_Pruned.root";
+    TString infile="eicReconOutput/EICreconOut_JPsiMuMu_02ifb_09x275ep_Pruned.root";
     //TString infile="dis_background/DIS_Q2_1_10_10x130ep_Pruned.root";
     
     std::string filename = infile.Data();
@@ -120,13 +120,13 @@ void DVMP_JPsi_Analysis()
     }
 
     double protonEnergy = std::stod(proton_energy); 
-    double lumi = 10.0; // Luminosity in fb^-1, adjust as needed
+    double lumi = 02.5; // Luminosity in fb^-1, adjust as needed
 
     std::cout << "Extracted beam config: " << beam_config << std::endl;
     std::cout << "Proton energy: " << protonEnergy << std::endl;
 
     int lumi_int = static_cast<int>(lumi);
-    std::string outfilename = "outputs/DVMP_SimCampaign_JPsi_AnalysisOutput_" + std::to_string(lumi_int) + "ifb_" + beam_config + ".root";
+    std::string outfilename = "outputs/DVMP_JPsi_AnalysisOutput_" + std::to_string(lumi_int) + "ifb_" + beam_config + ".root";
     //std::string outfilename = "outputs/DIS_Q2_1_10_AnalysisOutput_" + beam_config + ".root";
 
     // Set output file for the histograms
@@ -549,6 +549,11 @@ void DVMP_JPsi_Analysis()
         t_truth = -1*((scatp4MomT - beamp4Mom).mag2());
         y_truth =(beamp4Mom.Dot(beamE4Mom - scatE4MomT))/(beamp4Mom.Dot(beamE4Mom));
         x_truth = Q2_truth/(4*beamE4Mom.E()*beamp4Mom.E()*y_truth);
+
+        if (Q2_truth < 1) {
+            cutEvents[0]++;
+            continue; // Only look at events with Q2 > 1 GeV^2
+        }
 
         trueQ2->Fill(Q2_truth);
         truet->Fill(t_truth);
@@ -1020,7 +1025,7 @@ void DVMP_JPsi_Analysis()
     std::cout << "Event Processing Complete" << std::endl;
     std::cout << "Total Events Processed: " << eventID << std::endl;
     std::cout << "Cut Flow: " << std::endl;
-    std::cout << "  - Events with 3 tracks and sum charge of -1: " << eventID - cutEvents[0] << std::endl;
+    std::cout << "  - Events with 3 tracks, sum charge of -1, and Q2 > 1: " << eventID - cutEvents[0] << std::endl;
     std::cout << "  - Events with identified proton: " << eventID - cutEvents[0] - cutEvents[1] << std::endl;
     std::cout << "  - Events with correct parents: " << eventID - cutEvents[0] - cutEvents[1] - cutEvents[2] << std::endl;
     std::cout << "  - Events with identified electron: " << eventID - cutEvents[0] - cutEvents[1] - cutEvents[2] - cutEvents[3] << std::endl;
