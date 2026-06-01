@@ -36,19 +36,26 @@ Process the lAger output through the afterburner using the config **ip6_hiacc_27
 abconv -p ip6_hiacc_275x18 <OUTPUT_DIRECTORY>/lager-vmp-00mrad.jpsi-18on275.4pi.disp-jpsi-00-muon.run00001-lumi10.hepmc -o <OUTPUT_DIRECTORY>/ab_output-00mrad.jpsi-18on275.4pi.disp-jpsi-00-muon.run00001-lumi10
 ```
 
-### hepmc3ascii2root
+## New Early Science Configurations
 
-For all configurations, the output file was converted to a .hepmc3.tree.root file, and renamed to comply with simulation campaign naming.
+### 9x130
+Run with the [.json file](https://github.com/eic/lAger_JPsi_MuMu_Dataset/blob/main/lAger/9x130ep_00mrad/jpsi-9on130.disp-jpsi-00-muon.json) included in this repository:
+`lager -c jpsi-9on130.disp-jpsi-00-muon.json -r 1 -o <OUTPUT_DIRECTORY>`
+
+Process the lAger output through the afterburner using the config **ip6_hiacc_100x9**
 
 ```
-./hepmc3ascii2root <OUTPUT_DIRECTORY>/ab_output-00mrad.jpsi-<ELECTRON ENERGY>on<PROTON ENERGY>.4pi.disp-jpsi-00-muon.run00001-lumi10.hepmc <OUTPUT_DIRECTORY>/lAger_v3.6.1_DVMP_JPsi_<ELECTRON ENERGY>x<PROTON ENERGY>ep_q2_1to50.hepmc3.tree.root
+abconv -p ip6_hiacc_100x9 <OUTPUT_DIRECTORY>/lager-vmp-00mrad.jpsi-9on130.4pi.disp-jpsi-00-muon.run00001-lumi10.hepmc -o <OUTPUT_DIRECTORY>/ab_output-00mrad.jpsi-9on130.4pi.disp-jpsi-00-muon.run00001-lumi1
 ```
 
-### Skimming files
+### 9x275
+Run with the [.json file](https://github.com/eic/lAger_JPsi_MuMu_Dataset/blob/main/lAger/9x275ep_00mrad/jpsi-9on275.disp-jpsi-00-muon.json) included in this repository:
+`lager -c jpsi-9on275.disp-jpsi-00-muon.json -r 1 -o <OUTPUT_DIRECTORY>`
 
-Due to the large sizes of the output files, these were reduced by a factor of 10 down to 1ifb.
-This was done by taking every tenth event.
-The code for this is **/lAger/skim.C**
+Process the lAger output through the afterburner using the config **ip6_hiacc_275x9**
+
+```
+abconv -p ip6_hiacc_275x9 <OUTPUT_DIRECTORY>/lager-vmp-00mrad.jpsi-9on275.4pi.disp-jpsi-00-muon.run00001-lumi2.hepmc -o <OUTPUT_DIRECTORY>/ab_output-00mrad.jpsi-9on275.4pi.disp-jpsi-00-muon.run00001-lumi2
 
 ### Output Files
 
