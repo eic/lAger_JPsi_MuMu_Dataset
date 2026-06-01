@@ -45,7 +45,7 @@ Run with the [.json file](https://github.com/eic/lAger_JPsi_MuMu_Dataset/blob/ma
 Process the lAger output through the afterburner using the config **ip6_hiacc_100x9**
 
 ```
-abconv -p ip6_hiacc_100x9 <OUTPUT_DIRECTORY>/lager-vmp-00mrad.jpsi-9on130.4pi.disp-jpsi-00-muon.run00001-lumi10.hepmc -o <OUTPUT_DIRECTORY>/ab_output-00mrad.jpsi-9on130.4pi.disp-jpsi-00-muon.run00001-lumi1
+abconv -p ip6_hiacc_100x9 <OUTPUT_DIRECTORY>/lager-vmp-00mrad.jpsi-9on130.4pi.disp-jpsi-00-muon.run00001-lumi1.hepmc -o <OUTPUT_DIRECTORY>/ab_output-00mrad.jpsi-9on130.4pi.disp-jpsi-00-muon.run00001-lumi1
 ```
 
 ### 9x275
@@ -56,8 +56,9 @@ Process the lAger output through the afterburner using the config **ip6_hiacc_27
 
 ```
 abconv -p ip6_hiacc_275x9 <OUTPUT_DIRECTORY>/lager-vmp-00mrad.jpsi-9on275.4pi.disp-jpsi-00-muon.run00001-lumi2.hepmc -o <OUTPUT_DIRECTORY>/ab_output-00mrad.jpsi-9on275.4pi.disp-jpsi-00-muon.run00001-lumi2
+```
 
-### Output Files
+## Output Files
 
 The resulting output files for both configurations, to be used for the simulation campaigns are located at:
 ```
