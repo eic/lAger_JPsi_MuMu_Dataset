@@ -3,11 +3,11 @@
         "type": "lager-vmp-00mrad",
         "tag": "disp-jpsi-00-muon",
         "run": "1",
-        "lumi": "10",
+        "lumi": "2.5",
         "info": "lumi in fb^-1",
         "output_hepmc": "true",
         "generator": {
-            "type": "jpsi-18on275",
+            "type": "jpsi-9on275",
             "vertex": {
                 "type": "origin"
             },
@@ -20,7 +20,7 @@
                         "0",
                         "-1"
                     ],
-                    "energy": "18"
+                    "energy": "9"
                 },
                 "ion": {
                     "type": "constant",

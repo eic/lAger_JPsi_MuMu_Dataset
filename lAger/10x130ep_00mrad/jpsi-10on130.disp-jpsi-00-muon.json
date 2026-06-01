@@ -3,7 +3,7 @@
         "type": "lager-vmp-00mrad",
         "tag": "disp-jpsi-00-muon",
         "run": "1",
-        "lumi": "1",
+        "lumi": "10",
         "info": "lumi in fb^-1",
         "output_hepmc": "true",
         "generator": {
@@ -39,12 +39,12 @@
             "photon": {
                 "type": "vphoton",
                 "y_range": [
-                    "0.001",
-                    "1"
+                    "0.1",
+                    "0.95"
                 ],
                 "Q2_range": [
-                    "1e-12",
-                    "10000"
+                    "1",
+                    "50"
                 ]
             },
             "process_0": {
